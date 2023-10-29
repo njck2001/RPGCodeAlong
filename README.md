@@ -1,5 +1,5 @@
 *This program was created by following along with this YouTube series: [Demo RPG C++ Code-Along](https://www.youtube.com/watch?v=ssJde6l7mrM&list=PLalVdRk2RC6pqOVxRNj5Uui7FN4r-WorM)*<br>
-*While this version includes my own features, implementations, and comments, credit for the overall idea and design goes to the creator of the YouTube channel [Code, Tech, and Tutorials](https://www.youtube.com/@CodeTechandTutorials)*
+*While this version includes my own features, implementations, and comments, credit for the overall idea and core design goes to the creator of the YouTube channel [Code, Tech, and Tutorials](https://www.youtube.com/@CodeTechandTutorials)*
 
 # demo_rpg
 

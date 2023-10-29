@@ -51,21 +51,25 @@ public:
 
 // I decided to make HP its own derived class of PointWell because the shield complicates things
 class HP : public PointWell {
-    /// TODO: Figure out what to do with shield
-        /*  I'm thinking about removing to because imo, it just acts more like a health Buff
-            If we do remove it, we might as well remove the entire HP class and and just make HP
-                a standard PointWell
-            I was considering making special attacks like spells that can ignore shields
-            Either way, I definitely think I want to remove heal_shield as well as removing the shield's max
-            In fact, I don't think shield should be a PointWell nor something that characters start
-                with that the max for increases as they level up
-            I feel like it should instead be a consumable, and different shield consumables will give more shield than others
-            Alternatively, keep shield as it is, but actually let characters start battles with full shield
-            This might be OP at first but it'll make it such that once their shield is destroyed, they lose
-                it for the rest of the battle
-            I kinda prefer making it a consumable more
-        */
     std::unique_ptr<PointWell> shield_;
+    /// TODO: Reimplement shield
+    /*  I think I know what I want to do with the shield:
+            Before, I claimed it was too similar to a buff. But after looking at the Buff
+            class, I just realized that buffs can't even affect HP. So I'm thinking about
+            making the shield a consumable instead. Characters no longer start out with a
+            shield nor do they have a max shield. Instead, players will have to pick up shields
+            that disappear once depleted. Essentially, it's a "buff" but for your health.
+        When a shield is set to 0, it should become a nullptr
+            Although we might remove the pointer altogether; see below
+        I do not think shields should be healable. Keep it simple.
+            In fact, I might change shield_ to just an unsigned int rather than a PointWell ptr
+        Alternatively, remove the shield member altogether and just allow the HP class to
+        increase its points above its max using a special increase function
+            We might implement this special increase function in PointWell instead and just
+            remove the HP class altogether. That way, we could do something similar with MP.
+            Essentially, it would be equivalent to temporary hearts in Zelda BotW.
+        We'll need to go through PlayerCharacter and main to fix any errors cause by these changes
+    */
 
 public:
     HP(well_type max_hp = 1, well_type max_shield = 0, well_type shield_points = 0) :

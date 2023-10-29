@@ -1,5 +1,5 @@
 #pragma once
-#include "types.h"
+#include "Stats.h"
 #include <string>
 #include <vector>
 
@@ -9,16 +9,10 @@ struct Buff {
     std::string name;
     uint16_t duration;
 
-    stat_type strength; 
-    stat_type intellect;
-    stat_type agility;
-    stat_type armor;
-    stat_type resistance;
+    Stats stats;
 
     Buff() = delete; // Removes the default constructor so that it cannot be used
-    Buff(std::string name, uint16_t duration, stat_type strength = 0, stat_type intellect = 0,
-    stat_type agility = 0, stat_type armor = 0, stat_type resistance = 0, bool is_debuff = false) :
-        name(name), duration(duration), strength(strength), intellect(intellect),
-        agility(agility), armor(armor), resistance(resistance), is_debuff(is_debuff)
+    Buff(std::string name, uint16_t duration, Stats stats, bool is_debuff = false) :
+        name(name), duration(duration), stats(stats), is_debuff(is_debuff)
     {}
 };

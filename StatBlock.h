@@ -1,7 +1,8 @@
 #pragma once
+#include "Stats.h"
 #include "Buff.h"
-#include "types.h"
 #include <vector>
+#include <iostream>
 
 // For learning purposes, access has been organized from most restrictive to least restrictive
     // Conventional class formatting orders sections like so: public, protected, and private
@@ -13,41 +14,23 @@ private:
         Note: This is regardless of whether a derived class inherits as private, protected, or public
 */
     
-    stat_type strength_; 
-    stat_type intellect_;
-    stat_type agility_;
-    stat_type armor_;
-    stat_type resistance_;
+    Stats base_stats;
 
     std::vector<Buff> buffs_;
-    int16_t total_strength_from_buffs; 
-    int16_t total_intellect_from_buffs;
-    int16_t total_agility_from_buffs;
-    int16_t total_armor_from_buffs;
-    int16_t total_resistance_from_buffs;
+    Stats buff_stats;
+
+    std::vector<Buff> debuffs_;
+    Stats debuff_stats;
 
     void recalculate_buffs() {
-        total_strength_from_buffs = 0; 
-        total_intellect_from_buffs = 0;
-        total_agility_from_buffs = 0;
-        total_armor_from_buffs = 0;
-        total_resistance_from_buffs = 0;
-
+        buff_stats = Stats();
+        debuff_stats = Stats();
+        
         for (auto buff : buffs_) {
-            if (buff.is_debuff) {
-                total_strength_from_buffs -= buff.strength;
-                total_intellect_from_buffs -= buff.intellect;
-                total_agility_from_buffs -= buff.agility;
-                total_armor_from_buffs -= buff.armor;
-                total_resistance_from_buffs -= buff.resistance;
-            }
-            else {
-                total_strength_from_buffs += buff.strength;
-                total_intellect_from_buffs += buff.intellect;
-                total_agility_from_buffs += buff.agility;
-                total_armor_from_buffs += buff.armor;
-                total_resistance_from_buffs += buff.resistance;
-            }
+            buff_stats += buff.stats;
+        }
+        for (auto debuff : debuffs_) {
+            debuff_stats += debuff.stats;
         }
     }
 
@@ -59,25 +42,34 @@ protected:
         Note: This means that derived classes of derived classes can access these members and methods
 */
     
-    void increase_stats(stat_type strength = 0, stat_type intellect = 0, stat_type agility = 0,
-    stat_type armor = 0, stat_type resistance = 0) {
-        strength_ += strength;
-        intellect_ += intellect;
-        agility_ += agility;
-        armor_ += armor;
-        resistance_ += resistance;
-    }
+    void increase_stats(Stats amount) { base_stats += amount; }
 
     const std::vector<Buff>& buffs() { return buffs_; }
+    const std::vector<Buff>& debuffs() { return debuffs_; }
     void add_buff(Buff buff) {
-        for (auto& active_buff : buffs_) {
-            if (buff.name == active_buff.name) {
-                if (active_buff.duration < buff.duration)
-                active_buff.duration = buff.duration;
-                return;
+        if (buff.is_debuff) {
+            for (auto& active_debuff : debuffs_) {
+                if (buff.name == active_debuff.name) {
+                    if (active_debuff.duration < buff.duration) {
+                        active_debuff.duration = buff.duration;
+                    }
+                    return;
+                }
             }
+            debuffs_.push_back(buff);
         }
-        buffs_.push_back(buff);
+        else {
+            for (auto& active_buff : buffs_) {
+                if (buff.name == active_buff.name) {
+                    if (active_buff.duration < buff.duration) {
+                        active_buff.duration = buff.duration;
+                    }
+                    return;
+                }
+            }
+            buffs_.push_back(buff);
+        }
+
         recalculate_buffs();
     }
 
@@ -94,51 +86,27 @@ public:
         Note: This means that these members can be accessed using a derived class object that uses public inheritance,
             as well as derived classes of derived classes
 */
-    
-    // "explicit" ensures that only stat_type (or std::uint16_t) variables are allowed to be passed into the constructor
-    explicit StatBlock(stat_type strength = (stat_type)0u, stat_type intellect = (stat_type)0u,
-    stat_type agility = (stat_type)0u, stat_type armor = (stat_type)0u, stat_type resistance = (stat_type)0u) :
-        strength_(strength), intellect_(intellect), agility_(agility), armor_(armor), resistance_(resistance)
-    {}
+    StatBlock() : base_stats(Stats()) {}
+    StatBlock(Stats stats) : base_stats(stats) {}
 
     stat_type strength() {
-        if (total_strength_from_buffs < 0) {
-            if (-total_strength_from_buffs > strength_) {
-                return 0u;
-            }
-        }
-        return strength_ + total_strength_from_buffs;
+        stat_type sum = base_stats.strength + buff_stats.strength;
+        return (sum < debuff_stats.strength) ? 0u : sum - debuff_stats.strength;
     }
     stat_type intellect() {
-        if (total_intellect_from_buffs < 0) {
-            if (-total_intellect_from_buffs > intellect_) {
-                return 0u;
-            }
-        }
-        return intellect_ + total_intellect_from_buffs;
+        stat_type sum = base_stats.intellect + buff_stats.intellect;
+        return (sum < debuff_stats.intellect) ? 0u : sum - debuff_stats.intellect;
     }
     stat_type agility() {
-        if (total_agility_from_buffs < 0) {
-            if (-total_agility_from_buffs > agility_) {
-                return 0u;
-            }
-        }
-        return agility_ + total_agility_from_buffs;
+        stat_type sum = base_stats.agility + buff_stats.agility;
+        return (sum < debuff_stats.agility) ? 0u : sum - debuff_stats.agility;
     }
     stat_type armor() {
-        if (total_armor_from_buffs < 0) {
-            if (-total_armor_from_buffs > armor_) {
-                return 0u;
-            }
-        }
-        return armor_ + total_armor_from_buffs;
+        stat_type sum = base_stats.armor + buff_stats.armor;
+        return (sum < debuff_stats.armor) ? 0u : sum - debuff_stats.armor;
     }
     stat_type resistance() {
-        if (total_resistance_from_buffs < 0) {
-            if (-total_resistance_from_buffs > resistance_) {
-                return 0u;
-            }
-        }
-        return resistance_ + total_resistance_from_buffs;
+        stat_type sum = base_stats.resistance + buff_stats.resistance;
+        return (sum < debuff_stats.resistance) ? 0u : sum - debuff_stats.resistance;
     }
 };

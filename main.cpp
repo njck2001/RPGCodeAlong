@@ -28,12 +28,12 @@ int main() {
 
         p1.gain_exp(100u);
         if (i == 0) {
-            Buff armor_buff("StoneShield", 10, 0, 0, 0, 5);
+            Buff armor_buff("StoneShield", 10, Stats(0, 0, 0, 5));
             p1.add_buff(armor_buff);
         }
         if (i == 1) {
-            Buff armor_buff("RubberLegs", 5, 5, 0, 5, 0, 0, true);
-            p1.add_buff(armor_buff);
+            Buff rubber_debuff("RubberLegs", 5, Stats(5, 0, 5), true);
+            p1.add_buff(rubber_debuff);
         }
     }
 

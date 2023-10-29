@@ -20,7 +20,7 @@ class PlayerCharacterDelegate : public StatBlock {
 
 public:
     PlayerCharacterDelegate() :
-        StatBlock(0u, 0u, 0u),
+        StatBlock(),
         level_(1u), exp_(0u), etnl(BASE_ETNL),
         hp_(std::make_unique<HP>()),
         mp_(nullptr)
@@ -89,7 +89,7 @@ if (mp()) { \
     mp()->set_max(BASE_MP); \
     mp()->increase(BASE_MP); \
 } \
-increase_stats(BASE_STR, BASE_INT, BASE_AGI);
+increase_stats(Stats(BASE_STR, BASE_INT, BASE_AGI));
 
 #define LEVEL_UP \
 hp()->set_max(hp()->max() + HP_GROWTH); \
@@ -99,7 +99,7 @@ if (mp()) { \
     mp()->set_max(mp()->max() + MP_GROWTH); \
     mp()->increase(MP_GROWTH); \
 } \
-increase_stats(STR_GROWTH, INT_GROWTH, AGI_GROWTH);
+increase_stats(Stats(STR_GROWTH, INT_GROWTH, AGI_GROWTH));
 
 class Warrior : public PlayerCharacterDelegate {
 public:
@@ -175,7 +175,7 @@ private:
             mp()->set_max(mp()->max() + 1u);
             mp()->increase(1u);
 
-            increase_stats(0, 1);
+            increase_stats(Stats(0, 1));
         } 
     }
 };
