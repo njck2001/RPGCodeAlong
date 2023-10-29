@@ -20,47 +20,35 @@ private:
     stat_type resistance_;
 
     std::vector<Buff> buffs_;
-    stat_type total_strength_from_buffs = 0; 
-    stat_type total_intellect_from_buffs = 0;
-    stat_type total_agility_from_buffs = 0;
-    stat_type total_armor_from_buffs = 0;
-    stat_type total_resistance_from_buffs = 0;
+    int16_t total_strength_from_buffs; 
+    int16_t total_intellect_from_buffs;
+    int16_t total_agility_from_buffs;
+    int16_t total_armor_from_buffs;
+    int16_t total_resistance_from_buffs;
 
     void recalculate_buffs() {
-        int16_t tsfb = 0;   // total strength from buffs
-        int16_t tifb = 0;   // total intellect from buffs
-        int16_t tagfb = 0;  // total agility from buffs
-        int16_t tarfb = 0;  // total armor from buffs
-        int16_t trfb = 0;   // total resistance from buffs
+        total_strength_from_buffs = 0; 
+        total_intellect_from_buffs = 0;
+        total_agility_from_buffs = 0;
+        total_armor_from_buffs = 0;
+        total_resistance_from_buffs = 0;
 
         for (auto buff : buffs_) {
             if (buff.is_debuff) {
-                tsfb -= buff.strength;
-                tifb -= buff.intellect;
-                tagfb -= buff.agility;
-                tarfb -= buff.armor;
-                trfb -= buff.resistance;
+                total_strength_from_buffs -= buff.strength;
+                total_intellect_from_buffs -= buff.intellect;
+                total_agility_from_buffs -= buff.agility;
+                total_armor_from_buffs -= buff.armor;
+                total_resistance_from_buffs -= buff.resistance;
             }
             else {
-                tsfb += buff.strength;
-                tifb += buff.intellect;
-                tagfb += buff.agility;
-                tarfb += buff.armor;
-                trfb += buff.resistance;
+                total_strength_from_buffs += buff.strength;
+                total_intellect_from_buffs += buff.intellect;
+                total_agility_from_buffs += buff.agility;
+                total_armor_from_buffs += buff.armor;
+                total_resistance_from_buffs += buff.resistance;
             }
         }
-
-        if (tsfb < 0) { tsfb = 0; }
-        if (tifb < 0) { tifb = 0; }
-        if (tagfb < 0) { tagfb = 0; }
-        if (tarfb < 0) { tarfb = 0; }
-        if (trfb < 0) { trfb = 0; }
-
-        total_strength_from_buffs = tsfb; 
-        total_intellect_from_buffs = tifb;
-        total_agility_from_buffs = tagfb;
-        total_armor_from_buffs = tarfb;
-        total_resistance_from_buffs = trfb;
     }
 
 protected: 
@@ -113,9 +101,44 @@ public:
         strength_(strength), intellect_(intellect), agility_(agility), armor_(armor), resistance_(resistance)
     {}
 
-    stat_type strength() { return strength_ + total_strength_from_buffs; }
-    stat_type intellect() { return intellect_ + total_intellect_from_buffs; }
-    stat_type agility() { return agility_ + total_agility_from_buffs; }
-    stat_type armor() { return armor_ + total_armor_from_buffs; }
-    stat_type resistance() { return resistance_ + total_resistance_from_buffs; }
+    stat_type strength() {
+        if (total_strength_from_buffs < 0) {
+            if (-total_strength_from_buffs > strength_) {
+                return 0u;
+            }
+        }
+        return strength_ + total_strength_from_buffs;
+    }
+    stat_type intellect() {
+        if (total_intellect_from_buffs < 0) {
+            if (-total_intellect_from_buffs > intellect_) {
+                return 0u;
+            }
+        }
+        return intellect_ + total_intellect_from_buffs;
+    }
+    stat_type agility() {
+        if (total_agility_from_buffs < 0) {
+            if (-total_agility_from_buffs > agility_) {
+                return 0u;
+            }
+        }
+        return agility_ + total_agility_from_buffs;
+    }
+    stat_type armor() {
+        if (total_armor_from_buffs < 0) {
+            if (-total_armor_from_buffs > armor_) {
+                return 0u;
+            }
+        }
+        return armor_ + total_armor_from_buffs;
+    }
+    stat_type resistance() {
+        if (total_resistance_from_buffs < 0) {
+            if (-total_resistance_from_buffs > resistance_) {
+                return 0u;
+            }
+        }
+        return resistance_ + total_resistance_from_buffs;
+    }
 };

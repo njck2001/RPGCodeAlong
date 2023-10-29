@@ -32,7 +32,7 @@ int main() {
             p1.add_buff(armor_buff);
         }
         if (i == 1) {
-            Buff armor_buff("DamageStoneShield", 10, 0, 0, 0, 3, 0, true);
+            Buff armor_buff("RubberLegs", 5, 5, 0, 5, 0, 0, true);
             p1.add_buff(armor_buff);
         }
     }
