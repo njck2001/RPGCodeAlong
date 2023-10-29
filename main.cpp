@@ -1,5 +1,5 @@
-#include <iostream>
 #include "PlayerCharacter.h"
+#include <iostream>
 
 int main() {
     PlayerCharacter p1(new Warrior());
@@ -27,6 +27,14 @@ int main() {
         std::cout << "--------------------" << std::endl;
 
         p1.gain_exp(100u);
+        if (i == 0) {
+            Buff armor_buff("StoneShield", 10, 0, 0, 0, 5);
+            p1.add_buff(armor_buff);
+        }
+        if (i == 1) {
+            Buff armor_buff("DamageStoneShield", 10, 0, 0, 0, 3, 0, true);
+            p1.add_buff(armor_buff);
+        }
     }
 
     return 0;

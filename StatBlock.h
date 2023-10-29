@@ -1,7 +1,7 @@
 #pragma once
-#include <cstdint>
-
-typedef std::uint16_t    stat_type;
+#include "Buff.h"
+#include "types.h"
+#include <vector>
 
 // For learning purposes, access has been organized from most restrictive to least restrictive
     // Conventional class formatting orders sections like so: public, protected, and private
@@ -19,6 +19,50 @@ private:
     stat_type armor_;
     stat_type resistance_;
 
+    std::vector<Buff> buffs_;
+    stat_type total_strength_from_buffs = 0; 
+    stat_type total_intellect_from_buffs = 0;
+    stat_type total_agility_from_buffs = 0;
+    stat_type total_armor_from_buffs = 0;
+    stat_type total_resistance_from_buffs = 0;
+
+    void recalculate_buffs() {
+        int16_t tsfb = 0;   // total strength from buffs
+        int16_t tifb = 0;   // total intellect from buffs
+        int16_t tagfb = 0;  // total agility from buffs
+        int16_t tarfb = 0;  // total armor from buffs
+        int16_t trfb = 0;   // total resistance from buffs
+
+        for (auto buff : buffs_) {
+            if (buff.is_debuff) {
+                tsfb -= buff.strength;
+                tifb -= buff.intellect;
+                tagfb -= buff.agility;
+                tarfb -= buff.armor;
+                trfb -= buff.resistance;
+            }
+            else {
+                tsfb += buff.strength;
+                tifb += buff.intellect;
+                tagfb += buff.agility;
+                tarfb += buff.armor;
+                trfb += buff.resistance;
+            }
+        }
+
+        if (tsfb < 0) { tsfb = 0; }
+        if (tifb < 0) { tifb = 0; }
+        if (tagfb < 0) { tagfb = 0; }
+        if (tarfb < 0) { tarfb = 0; }
+        if (trfb < 0) { trfb = 0; }
+
+        total_strength_from_buffs = tsfb; 
+        total_intellect_from_buffs = tifb;
+        total_agility_from_buffs = tagfb;
+        total_armor_from_buffs = tarfb;
+        total_resistance_from_buffs = trfb;
+    }
+
 protected: 
 /*  Members and methods can be accessed by the base class and derived classes
     If inherited as private, derived classes will inherit protected members and methods as private members and methods
@@ -34,6 +78,19 @@ protected:
         agility_ += agility;
         armor_ += armor;
         resistance_ += resistance;
+    }
+
+    const std::vector<Buff>& buffs() { return buffs_; }
+    void add_buff(Buff buff) {
+        for (auto& active_buff : buffs_) {
+            if (buff.name == active_buff.name) {
+                if (active_buff.duration < buff.duration)
+                active_buff.duration = buff.duration;
+                return;
+            }
+        }
+        buffs_.push_back(buff);
+        recalculate_buffs();
     }
 
 public: 
@@ -56,9 +113,9 @@ public:
         strength_(strength), intellect_(intellect), agility_(agility), armor_(armor), resistance_(resistance)
     {}
 
-    stat_type strength() { return strength_; }
-    stat_type intellect() { return intellect_; }
-    stat_type agility() { return agility_; }
-    stat_type armor() { return armor_; }
-    stat_type resistance() { return resistance_; }
+    stat_type strength() { return strength_ + total_strength_from_buffs; }
+    stat_type intellect() { return intellect_ + total_intellect_from_buffs; }
+    stat_type agility() { return agility_ + total_agility_from_buffs; }
+    stat_type armor() { return armor_ + total_armor_from_buffs; }
+    stat_type resistance() { return resistance_ + total_resistance_from_buffs; }
 };

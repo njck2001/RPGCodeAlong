@@ -1,8 +1,7 @@
 #pragma once // does the same thing as indef, define, and endif, but all in one line
+#include "types.h"
 #include <cstdint> // uint16_t
 #include <memory> // unique_ptr
-
-typedef std::uint16_t   well_type; // basically the same as an unsigned int (max size is 65535)
 
 class PointWell {
     well_type points_; // well_type is basically the same as an unsigned int

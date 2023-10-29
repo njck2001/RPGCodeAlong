@@ -2,13 +2,10 @@
 #include "StatBlock.h"
 #include "PointWell.h"
 #include "Ability.h"
-#include <cstdint>
+#include "types.h"
 #include <memory> // unique_ptr
 #include <string>
 #include <vector>
-
-typedef std::uint64_t   exp_type;
-typedef std::uint16_t   level_type;
 
 class PlayerCharacterDelegate : public StatBlock {
     level_type level_;
@@ -48,6 +45,7 @@ public:
     uint32_t hp_effect, ABILITY_SCALAR scalar = ABILITY_SCALAR::NONE) {
         abilities_.emplace_back(name, cost, cooldown, target, hp_effect, scalar);
     }
+    void add_buff(Buff buff) { StatBlock::add_buff(buff); }
 
     virtual std::string class_name() = 0;
     private: virtual void level_up() = 0; // private because we do not expect this to be called outside of the base class
@@ -59,11 +57,8 @@ public:
         character-classes to override the functions with their own definitions.
     */
 
-private:
-/*  Note that we already made access private before declaring the level_up() virtual function
-    This "private:" is redundant and is solely added in for the sake of clarity
-*/
-         
+private: // Note: we already made access private before declaring the level_up() virtual function
+         // This "private:" is redundant and is solely added in for the sake of clarity 
     bool check_if_leveled() {
         bool etnl_grows_polynomially = false; // else, etnl grows exponentially
 
@@ -105,27 +100,6 @@ if (mp()) { \
     mp()->increase(MP_GROWTH); \
 } \
 increase_stats(STR_GROWTH, INT_GROWTH, AGI_GROWTH);
-
-/// TODO: Delete the commented out code after setting up github repo and committing
-/*
-#define CHARACTER_CLASS(classname, base_hp, base_str, base_int, base_agi)\
-class classname : public PlayerCharacterDelegate {\
-public:\
-    static const well_type BASE_HP = (well_type)base_hp;\
-    static const stat_type BASE_STR = (stat_type)base_str;\
-    static const stat_type BASE_INT = (stat_type)base_int;\
-    static const stat_type BASE_AGI = (stat_type)base_agi;\
-    std::string class_name() override { return std::string(#classname); }\
-    classname() PC_CONSTRUCT \
-private:\
-    LEVEL_UP\
-};
-
-CHARACTER_CLASS(Warrior, 18, 5, 2, 3)
-CHARACTER_CLASS(Wizard, 10, 1, 8, 1)
-CHARACTER_CLASS(Cleric, 14, 3, 5, 2)
-CHARACTER_CLASS(Rogue, 12, 3, 3, 5)
-*/
 
 class Warrior : public PlayerCharacterDelegate {
 public:
@@ -173,7 +147,7 @@ class Wizard : public PlayerCharacterDelegate {
 public:
     /// TODO: Needs balancing
     static const well_type BASE_HP = 10u;   // original value was 10
-    static const well_type BASE_MP = 14u;    // original value was 14
+    static const well_type BASE_MP = 14u;   // original value was 14
     static const stat_type BASE_STR = 1u;   // original value was 1
     static const stat_type BASE_INT = 8u;   // original value was 8
     static const stat_type BASE_AGI = 2u;   // original value was 2
@@ -210,7 +184,7 @@ class Cleric : public PlayerCharacterDelegate {
 public:
     /// TODO: Needs balancing
     static const well_type BASE_HP = 14u;   // original value was 14
-    static const well_type BASE_MP = 10u;    // original value was 10
+    static const well_type BASE_MP = 10u;   // original value was 10
     static const stat_type BASE_STR = 3u;   // original value was 3
     static const stat_type BASE_INT = 5u;   // original value was 5
     static const stat_type BASE_AGI = 1u;   // original value was 1
@@ -308,4 +282,5 @@ public:
     void heal (well_type amount) { pc_class->hp()->increase(amount); }
     bool heal_shield(well_type amount) { return pc_class->hp()->increase_shield(amount); }
     
+    void add_buff(Buff buff) { pc_class->add_buff(buff); }
 };
