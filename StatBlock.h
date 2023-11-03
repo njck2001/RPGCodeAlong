@@ -4,7 +4,8 @@
 #include <vector>
 #include <iostream>
 
-// For learning purposes, access has been organized from most restrictive to least restrictive
+
+// For educational purposes, access has been organized from most restrictive to least restrictive
     // Conventional class formatting orders sections like so: public, protected, and private
     // Typically, I like to keep private members at the top, before the public section
 // Note: Derived classes will inherit as private by default unless otherwise specified
@@ -86,6 +87,7 @@ public:
         Note: This means that these members can be accessed using a derived class object that uses public inheritance,
             as well as derived classes of derived classes
 */
+    
     StatBlock() : base_stats(Stats()) {}
     StatBlock(Stats stats) : base_stats(stats) {}
 

@@ -2,10 +2,12 @@
 #include "StatBlock.h"
 #include "PointWell.h"
 #include "Ability.h"
+#include "Equipment.h"
 #include "types.h"
 #include <memory> // unique_ptr
 #include <string>
 #include <vector>
+
 
 class PlayerCharacterDelegate : public StatBlock {
     level_type level_;
@@ -19,18 +21,13 @@ class PlayerCharacterDelegate : public StatBlock {
     static const exp_type BASE_ETNL = 100u;
 
 public:
-    PlayerCharacterDelegate() :
-        StatBlock(),
-        level_(1u), exp_(0u), etnl(BASE_ETNL),
-        hp_(std::make_unique<HP>()),
-        mp_(nullptr)
-    {}
-    
     void gain_exp(exp_type gained_exp) {
         exp_ += gained_exp;
         while (check_if_leveled()) {} // while loop in case we level up multiple times
     }
+    void add_buff(const Buff& buff) { StatBlock::add_buff(buff); }
 
+    // Getters
     level_type level() { return level_; }
     exp_type exp() { return exp_; }
     exp_type exp_to_next_level() { return etnl; }
@@ -38,6 +35,14 @@ public:
     const std::unique_ptr<PointWell>& mp() { return mp_; }
     const std::vector<Ability>& abilities() { return abilities_; }
 
+protected:
+    PlayerCharacterDelegate() :
+        StatBlock(),
+        level_(1u), exp_(0u), etnl(BASE_ETNL),
+        hp_(std::make_unique<HP>()),
+        mp_(nullptr)
+    {}
+    
     void make_mp_well(well_type max_points, well_type points) {
         mp_ = std::make_unique<PointWell>(max_points, points);
     }
@@ -45,20 +50,8 @@ public:
     uint32_t hp_effect, ABILITY_SCALAR scalar = ABILITY_SCALAR::NONE) {
         abilities_.emplace_back(name, cost, cooldown, target, hp_effect, scalar);
     }
-    void add_buff(Buff buff) { StatBlock::add_buff(buff); }
 
-    virtual std::string class_name() = 0;
-    private: virtual void level_up() = 0; // private because we do not expect this to be called outside of the base class
-    /*  Unlike functions such as gain_exp() and heal(), level_up() and class_name()
-        work differently depending on the character-class. For example, for Warrior,
-        we want class_name() to return "Warrior", but for Cleric, we want class_name()
-        to return "Cleric". Therefore, we want each character-class to define these
-        functions differently. By making these virtual functions, we force
-        character-classes to override the functions with their own definitions.
-    */
-
-private: // Note: we already made access private before declaring the level_up() virtual function
-         // This "private:" is redundant and is solely added in for the sake of clarity 
+private:
     bool check_if_leveled() {
         bool etnl_grows_polynomially = false; // else, etnl grows exponentially
 
@@ -79,7 +72,19 @@ private: // Note: we already made access private before declaring the level_up()
 
         return false;
     }
+
+// Virtual functions (stored together at the bottom for educational purposes)
+public: virtual std::string class_name() = 0; // public because we want to call this outside of the base class
+private: virtual void level_up() = 0; // private because we do not expect this to be called outside of the base class
+/*  Unlike functions such as gain_exp() and add_buff(), level_up() and class_name()
+    work differently depending on the character-class. For example, for Warrior,
+    we want class_name() to return "Warrior", but for Cleric, we want class_name()
+    to return "Cleric". Therefore, we want each character-class to define these
+    functions differently. By making these virtual functions, we force
+    character-classes to override the functions with their own definitions.
+*/
 };
+
 
 #define PC_CONSTRUCT \
 hp()->set_max(BASE_HP); \
@@ -239,18 +244,46 @@ private:
     }
 };
 
+
 class PlayerCharacter {
     PlayerCharacterDelegate *pc_class;
+    Armor* equipped_armor_[(int)ARMORSLOT::NUM_SLOTS];
+    Weapon* equipped_weapons_[(int)WEAPONSLOT::NUM_SLOTS];
 
 public:
-    PlayerCharacter() = delete; // Removes the default constructor so that it cannot be used
-    PlayerCharacter(PlayerCharacterDelegate* pc_class) : pc_class(pc_class) {}
-    ~PlayerCharacter() { delete pc_class; pc_class = nullptr; }
+    PlayerCharacter(PlayerCharacterDelegate* pc_class) : pc_class(pc_class) {
+        int i;
+        for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+            equipped_armor_[i] = nullptr;
+        }
+        for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+            equipped_weapons_[i] = nullptr;
+        }
+    }
 
+    ~PlayerCharacter() {
+        delete pc_class;
+        pc_class = nullptr;
+        for (int i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+            if (equipped_armor_[i]) {
+                delete equipped_armor_[i];
+                equipped_armor_[i] = nullptr;
+            }
+        }
+        for (int i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+            if (equipped_weapons_[i]) {
+                delete equipped_weapons_[i];
+                equipped_weapons_[i] = nullptr;
+            }
+        }
+    }
+
+    // Getters
     std::string class_name() { return pc_class->class_name(); }
     level_type level() { return pc_class->level(); }
     exp_type exp() { return pc_class->exp(); }
     exp_type etnl() { return pc_class->exp_to_next_level(); }
+    
     well_type hp() { return pc_class->hp()->points(); }
     well_type max_hp() { return pc_class->hp()->max(); }
     well_type shield() { return pc_class->hp()->shield(); }
@@ -269,18 +302,134 @@ public:
         return 0u;
     }
 
-    stat_type strength() { return pc_class->strength(); }
-    stat_type intellect() { return pc_class->intellect(); }
-    stat_type agility() { return pc_class->agility(); }
-    stat_type armor() { return pc_class->armor(); }
-    stat_type resistance() { return pc_class->resistance(); }
-
+    stat_type strength() {
+        stat_type total_strength = pc_class->strength();
+        int i;
+        for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+            if (equipped_armor_[i]) {
+                total_strength += equipped_armor_[i]->stats().strength;
+            }
+        }
+        for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+            if (equipped_weapons_[i]) {
+                total_strength += equipped_weapons_[i]->stats().strength;
+            }
+        }
+        return total_strength;
+    }
+    stat_type intellect() {
+        stat_type total_intellect = pc_class->intellect();
+        int i;
+        for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+            if (equipped_armor_[i]) {
+                total_intellect += equipped_armor_[i]->stats().intellect;
+            }
+        }
+        for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+            if (equipped_weapons_[i]) {
+                total_intellect += equipped_weapons_[i]->stats().intellect;
+            }
+        }
+        return total_intellect;
+    }
+    stat_type agility() {
+        stat_type total_agility = pc_class->agility();
+        int i;
+        for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+            if (equipped_armor_[i]) {
+                total_agility += equipped_armor_[i]->stats().agility;
+            }
+        }
+        for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+            if (equipped_weapons_[i]) {
+                total_agility += equipped_weapons_[i]->stats().agility;
+            }
+        }
+        return total_agility;
+    }
+    stat_type armor() {
+        stat_type total_armor = pc_class->armor();
+        int i;
+        for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+            if (equipped_armor_[i]) {
+                total_armor += equipped_armor_[i]->stats().armor;
+            }
+        }
+        for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+            if (equipped_weapons_[i]) {
+                total_armor += equipped_weapons_[i]->stats().armor;
+            }
+        }
+        return total_armor;
+    }
+    stat_type resistance() {
+        stat_type total_resistance = pc_class->resistance();
+        int i;
+        for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+            if (equipped_armor_[i]) {
+                total_resistance += equipped_armor_[i]->stats().resistance;
+            }
+        }
+        for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+            if (equipped_weapons_[i]) {
+                total_resistance += equipped_weapons_[i]->stats().resistance;
+            }
+        }
+        return total_resistance;
+    }
     std::vector<Ability> abilities() { return pc_class->abilities(); }
 
-    void gain_exp(exp_type amount) { pc_class->gain_exp(amount); }
-    void damage (well_type amount) { pc_class->hp()->decrease(amount); }
-    void heal (well_type amount) { pc_class->hp()->increase(amount); }
-    bool heal_shield(well_type amount) { return pc_class->hp()->increase_shield(amount); }
+    Equipment* equipped_armor(ARMORSLOT slot) { return equipped_armor_[(int)slot]; }
+    Equipment* equipped_armor(int slot) { return equipped_armor_[slot]; }
+    Equipment* equipped_weapon(WEAPONSLOT slot) { return equipped_weapons_[(int)slot]; }
+    Equipment* equipped_weapon(int slot) { return equipped_weapons_[slot]; }
     
+    // Modifiers
+    void gain_exp(exp_type amount) { pc_class->gain_exp(amount); }
+    void damage(well_type amount) { pc_class->hp()->decrease(amount); }
+    void heal(well_type amount) { pc_class->hp()->increase(amount); }
+    bool heal_shield(well_type amount) { return pc_class->hp()->increase_shield(amount); }
     void add_buff(Buff buff) { pc_class->add_buff(buff); }
+
+    /// TODO: Update once we implement an inventory
+    bool equip(Equipment* item) {
+        Armor* armor = dynamic_cast<Armor*>(item);
+        if (armor) {
+            // Equip armor
+            int slot_num = (int)armor->slot();
+            if (equipped_armor_[slot_num]) {
+                delete equipped_armor_[slot_num];
+                /// TODO: move to inventory instead of delete
+                equipped_armor_[slot_num] = armor;
+            }
+            else {
+                equipped_armor_[slot_num] = armor;
+            }
+
+            return true;
+        }
+        
+        Weapon* weapon = dynamic_cast<Weapon*>(item);
+        if (weapon) {
+            // Equip weapon
+            int slot_num = (int)weapon->slot();
+            if (equipped_weapons_[slot_num]) {
+                delete equipped_weapons_[slot_num];
+                /// TODO: move to inventory instead of delete
+                equipped_weapons_[slot_num] = weapon;
+            }
+            else {
+                equipped_weapons_[slot_num] = weapon;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    // Deleted Constructors
+    PlayerCharacter() = delete; // Removes the default constructor so that it cannot be used
+    PlayerCharacter(const PlayerCharacter&) = delete; // Removes copy constructor
+    PlayerCharacter(const PlayerCharacter&&) = delete; // Removes move constructor
 };

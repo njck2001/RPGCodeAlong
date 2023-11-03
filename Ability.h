@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+
 enum class ABILITY_TARGET { SELF, ENEMY, ALLY, };
 enum class ABILITY_SCALAR { NONE, STR, INT, AGI };
 

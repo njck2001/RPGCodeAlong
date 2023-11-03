@@ -3,6 +3,7 @@
 #include <cstdint> // uint16_t
 #include <memory> // unique_ptr
 
+
 class PointWell {
     well_type points_; // well_type is basically the same as an unsigned int
     well_type max_points;
@@ -46,7 +47,6 @@ public:
     well_type max() { return max_points; }
     well_type points() { return points_; }
 };
-
 
 
 // I decided to make HP its own derived class of PointWell because the shield complicates things

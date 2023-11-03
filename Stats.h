@@ -1,6 +1,7 @@
 #pragma once
 #include "types.h"
 
+
 struct Stats {
     stat_type strength; 
     stat_type intellect;
