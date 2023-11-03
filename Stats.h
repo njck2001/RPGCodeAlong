@@ -7,6 +7,7 @@ struct Stats {
     stat_type intellect;
     stat_type agility;
     stat_type armor;
+    /// TODO: Change "armor" to "defense" to make it less confusing
     stat_type resistance;
 
     Stats(stat_type strength = 0, stat_type intellect = 0, stat_type agility = 0,

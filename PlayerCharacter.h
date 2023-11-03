@@ -2,7 +2,7 @@
 #include "StatBlock.h"
 #include "PointWell.h"
 #include "Ability.h"
-#include "Equipment.h"
+#include "Item.h"
 #include "types.h"
 #include <memory> // unique_ptr
 #include <string>
@@ -74,8 +74,10 @@ private:
     }
 
 // Virtual functions (stored together at the bottom for educational purposes)
-public: virtual std::string class_name() = 0; // public because we want to call this outside of the base class
-private: virtual void level_up() = 0; // private because we do not expect this to be called outside of the base class
+public:
+    virtual std::string class_name() = 0; // public because we want to call this outside of the base class
+private:
+    virtual void level_up() = 0; // private because we do not expect this to be called outside of the base class
 /*  Unlike functions such as gain_exp() and add_buff(), level_up() and class_name()
     work differently depending on the character-class. For example, for Warrior,
     we want class_name() to return "Warrior", but for Cleric, we want class_name()
@@ -246,7 +248,7 @@ private:
 
 
 class PlayerCharacter {
-    PlayerCharacterDelegate *pc_class;
+    PlayerCharacterDelegate* pc_class;
     Armor* equipped_armor_[(int)ARMORSLOT::NUM_SLOTS];
     Weapon* equipped_weapons_[(int)WEAPONSLOT::NUM_SLOTS];
 
@@ -264,13 +266,15 @@ public:
     ~PlayerCharacter() {
         delete pc_class;
         pc_class = nullptr;
-        for (int i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
+        
+        int i;
+        for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
             if (equipped_armor_[i]) {
                 delete equipped_armor_[i];
                 equipped_armor_[i] = nullptr;
             }
         }
-        for (int i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
+        for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
             if (equipped_weapons_[i]) {
                 delete equipped_weapons_[i];
                 equipped_weapons_[i] = nullptr;
@@ -379,10 +383,10 @@ public:
     }
     std::vector<Ability> abilities() { return pc_class->abilities(); }
 
-    Equipment* equipped_armor(ARMORSLOT slot) { return equipped_armor_[(int)slot]; }
-    Equipment* equipped_armor(int slot) { return equipped_armor_[slot]; }
-    Equipment* equipped_weapon(WEAPONSLOT slot) { return equipped_weapons_[(int)slot]; }
-    Equipment* equipped_weapon(int slot) { return equipped_weapons_[slot]; }
+    EquipmentDelegate* equipped_armor(ARMORSLOT slot) { return equipped_armor_[(int)slot]; }
+    EquipmentDelegate* equipped_armor(int slot) { return equipped_armor_[slot]; }
+    EquipmentDelegate* equipped_weapon(WEAPONSLOT slot) { return equipped_weapons_[(int)slot]; }
+    EquipmentDelegate* equipped_weapon(int slot) { return equipped_weapons_[slot]; }
     
     // Modifiers
     void gain_exp(exp_type amount) { pc_class->gain_exp(amount); }
@@ -392,8 +396,15 @@ public:
     void add_buff(Buff buff) { pc_class->add_buff(buff); }
 
     /// TODO: Update once we implement an inventory
-    bool equip(Equipment* item) {
-        Armor* armor = dynamic_cast<Armor*>(item);
+    bool equip(Item* item) {
+        if (!item) {
+            return false;
+        }
+        if (!item->data()) {
+            return false;
+        }
+
+        Armor* armor = dynamic_cast<Armor*>(item->data_);
         if (armor) {
             // Equip armor
             int slot_num = (int)armor->slot();
@@ -409,7 +420,7 @@ public:
             return true;
         }
         
-        Weapon* weapon = dynamic_cast<Weapon*>(item);
+        Weapon* weapon = dynamic_cast<Weapon*>(item->data_);
         if (weapon) {
             // Equip weapon
             int slot_num = (int)weapon->slot();

@@ -5,11 +5,18 @@
 #include <iostream>
 
 
-// For educational purposes, access has been organized from most restrictive to least restrictive
-    // Conventional class formatting orders sections like so: public, protected, and private
-    // Typically, I like to keep private members at the top, before the public section
-// Note: Derived classes will inherit as private by default unless otherwise specified
+/*  For educational purposes, access specifiers have been organized from most restrictive to least restrictive
+    Conventional class formatting orders access specifiers from least restictive to most restrictive (public, protected, private)
+    Typically, I like to keep private members at the top, before the public access specifier (classes are private by default)
+    Note: Derived classes will inherit as private by default unless otherwise specified
+*/
+/// TODO: Organize access specifies from public to private and make comments underneath them more clear
+    // Honestly, I forgot why I formatted it this way or how ordering from private to public is better "for educational purposes"
 class StatBlock {
+    // Typically, I like to keep private members at the top, before the public access specifier (classes are private by default)
+    // For educational purposes and clarity, I've refained myself from doing it here
+    // All private members and methods can be found underneath the private access specifier
+
 private:
 /*  Members and methods cannot be accessed by anyone (including derived classes) except by the base class
         Note: This is regardless of whether a derived class inherits as private, protected, or public
@@ -91,6 +98,7 @@ public:
     StatBlock() : base_stats(Stats()) {}
     StatBlock(Stats stats) : base_stats(stats) {}
 
+    // Getters
     stat_type strength() {
         stat_type sum = base_stats.strength + buff_stats.strength;
         return (sum < debuff_stats.strength) ? 0u : sum - debuff_stats.strength;
