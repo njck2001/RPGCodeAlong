@@ -44,8 +44,10 @@ public:
         points_ += amount;
     }
 
+    // Getters
     well_type max() { return max_points; }
     well_type points() { return points_; }
+    bool is_full() { return points_ == max_points; }
 };
 
 

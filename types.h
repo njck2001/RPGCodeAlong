@@ -4,3 +4,4 @@ typedef std::uint16_t   well_type; // basically the same as an unsigned int (max
 typedef std::uint16_t   stat_type;
 typedef std::uint64_t   exp_type;
 typedef std::uint16_t   level_type;
+typedef std::uint16_t   item_count;

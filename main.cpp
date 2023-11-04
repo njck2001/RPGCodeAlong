@@ -6,8 +6,8 @@
 /*  For the rest of this code along series, I intend to implement everything the same way
     as shown in the videos. I will make notes of what I would like to do differently through
     creating TODOs, and then work through these TODOs after finishing the series. This should
-    save a lot more time and cause a lot less confusion. We will, however, continue to create
-    and use our own variable names
+    save a lot more time and cause a lot less confusion. I will, however, continue to create
+    and use my own variable names
 */
 
 /// TODO: Restrict access to class members and methods and create getters and setters
@@ -49,6 +49,8 @@ int main() {
             std::cout << "equip failed\n";
         }
     }
+
+    Item* heal_potion = ItemManager::make_potion("Minor Healing Potion", 3u, 0u, nullptr, 3u);
 
     std::cout << std::endl;
     for (size_t i = 0; i < 3; i++) {
@@ -96,10 +98,14 @@ int main() {
         if (i == 0) {
             Buff armor_buff("Thick Skin", 10, Stats(0, 0, 0, 2, 2));
             p1.add_buff(armor_buff);
+            p1.damage(5u);
+            std::cout << "Damaged by 4\n" << std::endl;
         }
         if (i == 1) {
             Buff rubber_debuff("Rubber Legs", 5, Stats(5, 0, 5), true);
             p1.add_buff(rubber_debuff);
+            p1.use(heal_potion);
+            std::cout << "Used Minor Healing Potion\n" << std::endl;
         }
     }
 

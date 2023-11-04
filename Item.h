@@ -1,7 +1,6 @@
 #pragma once
-#include "Stats.h"
+#include "Buff.h"
 #include <string>
-//#include <typeinfo>
 
 
 class ItemDelegate {
@@ -19,21 +18,29 @@ protected:
 };
 
 
-// Use this one in your runtime code
-class Item {
-    ItemDelegate* data_;
-
+class Potion final : public ItemDelegate {
 public:
-    const ItemDelegate* data() { return data_; }
-    ~Item() {
-        delete data_;
-        data_ = nullptr;
+    Buff* buff;
+    well_type hp_heal;
+    well_type mp_heal;
+    item_count quantity;
+
+    ~Potion() {
+        if (buff) {
+            delete buff;
+            buff = nullptr;
+        }
     }
 
+    // Getters
+    const char* type() { return "Potion"; }
+
 private:
-    Item(ItemDelegate* item_data) : data_(item_data) {}
+    Potion(std::string name, well_type hp_heal, well_type mp_heal, Buff* buff, item_count quantity) :
+        ItemDelegate(name), hp_heal(hp_heal), mp_heal(mp_heal), buff(buff), quantity(quantity)
+    {}
+
     friend class ItemManager;
-    friend class PlayerCharacter;
 };
 
 
@@ -57,8 +64,7 @@ class Armor final : public EquipmentDelegate {
 
 public:
     // Getters
-    //const char* type() { return typeid(*this).name(); } // returns "class Armor"
-    const char* type() override { return "Armor"; }
+    const char* type() { return "Armor"; }
     ARMORSLOT slot() { return slot_; }
 
 private:
@@ -85,8 +91,7 @@ class Weapon final : public EquipmentDelegate {
 
 public:
     // Getters
-    //const char* type() { return typeid(*this).name(); } // returns "class Weapon"
-    const char* type() override { return "Weapon"; }
+    const char* type() { return "Weapon"; }
     WEAPONSLOT slot() { return slot_; }
     uint16_t min_damage() { return min_damage_; }
     uint16_t max_damage() { return max_damage_; }
@@ -104,4 +109,24 @@ private:
     Weapon() = delete; // Removes the default constructor so that it cannot be used
     Weapon(const Weapon&) = delete; // Removes copy constructor
     Weapon(const Weapon&&) = delete; // Removes move constructor
+};
+
+
+// Use this one in your runtime code
+class Item {
+    ItemDelegate* data_;
+
+public:
+    const ItemDelegate* data() const { return data_; }
+    ~Item() {
+        if (data_) {
+            delete data_;
+            data_ = nullptr;
+        }
+    }
+
+private:
+    Item(ItemDelegate* item_data) : data_(item_data) {}
+    friend class ItemManager;
+    friend class PlayerCharacter;
 };

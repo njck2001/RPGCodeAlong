@@ -400,7 +400,7 @@ public:
         if (!item) {
             return false;
         }
-        if (!item->data()) {
+        if (!item->data_) {
             return false;
         }
 
@@ -431,6 +431,42 @@ public:
             }
             else {
                 equipped_weapons_[slot_num] = weapon;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// TODO: Refactor this function to make the logic clearer
+    bool use(Item* item) {
+        if (!item) {
+            return false;
+        }
+        if (!item->data_) {
+            return false;
+        }
+        
+        Potion* potion = dynamic_cast<Potion*>(item->data_);
+        if (potion) {
+            // Apply buff if it has any
+            if (potion->buff) {
+                add_buff(*potion->buff);
+            }
+
+            // If max health and trying to use a heal potion, don't
+            if (pc_class->hp()->is_full() && !potion->buff) {
+                return false;
+            }
+
+            // Increase hp by heal amount (could be 0, and that's fine!)
+            heal(potion->hp_heal);
+
+            // We used the potion, so reduce quantity
+            potion->quantity--;
+            if (potion->quantity == 0) {
+                delete potion;
             }
 
             return true;
