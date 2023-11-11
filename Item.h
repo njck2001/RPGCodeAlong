@@ -2,6 +2,8 @@
 #include "Buff.h"
 #include <string>
 
+#include <iostream> // for testing, we will remove this
+
 
 class ItemDelegate {
     std::string name_;
@@ -20,6 +22,7 @@ protected:
 
 class Potion final : public ItemDelegate {
 public:
+    /// TODO: Make members private and create getters for them
     Buff* buff;
     well_type hp_heal;
     well_type mp_heal;
@@ -45,7 +48,7 @@ private:
 
 
 class EquipmentDelegate : public ItemDelegate {
-    const uint32_t ID;
+    const uint32_t id = -1;
     Stats stats_;
 public:
     // Getters
@@ -124,9 +127,28 @@ public:
             data_ = nullptr;
         }
     }
+    const bool marked_for_deletion() const { return marked_for_deletion_; }
 
 private:
     Item(ItemDelegate* item_data) : data_(item_data) {}
+    bool marked_for_deletion_ = false;
+
     friend class ItemManager;
     friend class PlayerCharacter;
+
+    friend std::ostream& operator<<(std::ostream& os, const Item& item) {
+    Armor* tmp_cast = dynamic_cast<Armor*>(item.data_);
+    if (tmp_cast) {
+      return os << tmp_cast->name() << " (Armor: " << tmp_cast->stats().armor << ", Resist: " << tmp_cast->stats().resistance << ')';
+    }
+    Weapon* tmp_cast2 = dynamic_cast<Weapon*>(item.data_);
+    if (tmp_cast2) {
+      return  os << tmp_cast2->name() << " (Damage: " << tmp_cast2->min_damage() << '-' << tmp_cast2->max_damage() << ')';
+    }
+    Potion* tmp_cast3 = dynamic_cast<Potion*>(item.data_);
+    if (tmp_cast3) {
+      return os << tmp_cast3->name() << " (Quantity: " << tmp_cast3->quantity << ')';
+    }
+    return os;
+  }
 };

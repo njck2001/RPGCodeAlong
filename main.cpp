@@ -14,46 +14,25 @@
 /// TODO: Reorganize classes
 /// TODO: Create .cpp files for rest of .h files
 /// TODO: Refactor such that the code is consistent and easy to understand
+/// TODO: Remove unnecessary includes
+/// TODO: Implement error messages and error handling
 /// TODO: Go through and edit/reformat comments to make them more clear and consistent
 
 int main() {
     PlayerCharacter p1(new Warrior());
     p1.heal_shield(1u);
     
-    {
-        Item* plate_armor = ItemManager::make_armor("Shiny Plate Armor", Stats(0, 0, 0, 5, 3), ARMORSLOT::CHEST);
-        if (p1.equip(plate_armor)) {
-            std::cout << "equip succeeded\n";
-        }
-        else {
-            std::cout << "equip failed\n";
-        }
-    }
+    Item* plate_armor = ItemManager::make_armor("Shiny Plate Armor", Stats(0, 0, 0, 5, 3), ARMORSLOT::CHEST);
+    Item* leather_armor = ItemManager::make_armor("Plain Leather Armor", Stats(0, 0, 0, 2, 1), ARMORSLOT::CHEST);
+    Item* long_sword = ItemManager::make_weapon("Long Sword", Stats(), WEAPONSLOT::MELEE, 3, 9);
+    Item* hand_axe = ItemManager::make_weapon("Rusty Hand Axe", Stats(), WEAPONSLOT::MELEE, 2, 4);
+    Item* heal_potion = ItemManager::make_potion("Minor Healing", 3u, 0u, nullptr, 3u);
 
-    {
-        Item* leather_helmet = ItemManager::make_armor("Leather Helmet", Stats(0, 0, 0, 1, 1), ARMORSLOT::HELMET);
-        if (p1.equip(leather_helmet)) {
-            std::cout << "equip succeeded\n";
-        }
-        else {
-            std::cout << "equip failed\n";
-        }
-    }
+    ItemManager::equip(leather_armor, &p1);
+    ItemManager::equip(long_sword, &p1);
+    ItemManager::move_to_backpack(heal_potion, &p1);
 
-    {
-        Item* long_sword = ItemManager::make_weapon("Long Sword", Stats(), WEAPONSLOT::MELEE, 3, 9);
-        if (p1.equip(long_sword)) {
-            std::cout << "equip succeeded\n";
-        }
-        else {
-            std::cout << "equip failed\n";
-        }
-    }
-
-    Item* heal_potion = ItemManager::make_potion("Minor Healing Potion", 3u, 0u, nullptr, 3u);
-
-    std::cout << std::endl;
-    for (size_t i = 0; i < 3; i++) {
+    for (size_t i = 0; i < 5; i++) {
         std::cout
             << "Level " << p1.level() << ' ' << p1.class_name() << '\n'
             << " -EXP: " << p1.exp() << '/' << p1.etnl() << '\n'
@@ -92,6 +71,13 @@ int main() {
             }
         }
 
+        std::cout << "Inventory: ";
+        auto inv = p1.backpack();
+        for (auto item : inv) {
+            std::cout << *item << ", ";
+        }
+        std::cout << std::endl;
+
         std::cout << "--------------------" << std::endl;
 
         p1.gain_exp(100u);
@@ -99,13 +85,27 @@ int main() {
             Buff armor_buff("Thick Skin", 10, Stats(0, 0, 0, 2, 2));
             p1.add_buff(armor_buff);
             p1.damage(5u);
-            std::cout << "Damaged by 4\n" << std::endl;
+            std::cout << "Damaged by 5\n" << std::endl;
+            ItemManager::equip(plate_armor, &p1);
+            std::cout << "Equipped Shiny Plate Armor" << std::endl;
         }
         if (i == 1) {
             Buff rubber_debuff("Rubber Legs", 5, Stats(5, 0, 5), true);
             p1.add_buff(rubber_debuff);
-            p1.use(heal_potion);
+            ItemManager::use(heal_potion, &p1);
             std::cout << "Used Minor Healing Potion\n" << std::endl;
+            ItemManager::equip(hand_axe, &p1);
+            std::cout << "Equipped Rusty Hand Axe" << std::endl;
+        }
+        if (i == 2) {
+            ItemManager::use(heal_potion, &p1);
+            ItemManager::use(heal_potion, &p1);
+            std::cout << "Tried to use remaining Minor Healing Potions\n" << std::endl;
+        }
+        if (i == 3) {
+            p1.damage(1u);
+            ItemManager::use(heal_potion, &p1);
+            std::cout << "Used remaining Minor Healing Potions\n" << std::endl;
         }
     }
 

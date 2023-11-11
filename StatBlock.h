@@ -14,7 +14,7 @@
     // Honestly, I forgot why I formatted it this way or how ordering from private to public is better "for educational purposes"
 class StatBlock {
     // Typically, I like to keep private members at the top, before the public access specifier (classes are private by default)
-    // For educational purposes and clarity, I've refained myself from doing it here
+    // For educational purposes and clarity, I've refained from doing it here
     // All private members and methods can be found underneath the private access specifier
 
 private:
