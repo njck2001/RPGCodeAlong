@@ -1,62 +1,77 @@
 #pragma once
 #include "Buff.h"
 #include <string>
+#include <iostream>
 
-#include <iostream> // for testing, we will remove this
 
 
 class ItemDelegate {
     std::string name_;
 public:
-    // Getters
     const std::string& name() const { return name_; } 
-    /*  First const ensures the name() returns a const reference - a reference to name_ that
-        cannot be modified. The second const allows const objects to call this functions.
+    /*  The first const ensures that name() returns a constant reference - a reference to name_
+        that cannot be modified. The second const allows const objects to call this functions.
         Otherwise, trying to call name() using a const object would cause an error.
     */
-    virtual const char* type() = 0;
+    virtual const char* type() const = 0; // See PlayerCharacter.h to learn about virtual functions
 protected:
     ItemDelegate(std::string name) : name_(name) {}
 };
 
 
-class Potion final : public ItemDelegate {
-public:
-    /// TODO: Make members private and create getters for them
-    Buff* buff;
-    well_type hp_heal;
-    well_type mp_heal;
-    item_count quantity;
 
+class Potion final : public ItemDelegate {
+    Buff* buff_;
+    welltype hp_heal_;
+    welltype mp_heal_;
+    uint16_t quantity_;
+    bool overheal;
+
+public:
+    // Deconstructor
     ~Potion() {
-        if (buff) {
-            delete buff;
-            buff = nullptr;
+        if (buff_) {
+            delete buff_;
+            buff_ = nullptr;
         }
     }
 
-    // Getters
-    const char* type() { return "Potion"; }
+    const char* type() const { return "Potion"; }
+    const Buff* buff() const { return buff_; }
+    welltype hp_heal() const { return hp_heal_; }
+    welltype mp_heal() const { return mp_heal_; }
+    uint16_t quantity() const { return quantity_; }
+
+    // Deleted Constructors
+    Potion() = delete;
+    Potion(const Potion&) = delete; // Removes copy constructor
+    Potion(const Potion&&) = delete; // Removes move constructor
 
 private:
-    Potion(std::string name, well_type hp_heal, well_type mp_heal, Buff* buff, item_count quantity) :
-        ItemDelegate(name), hp_heal(hp_heal), mp_heal(mp_heal), buff(buff), quantity(quantity)
-    {}
+    Potion(std::string name, Buff* buff, uint16_t quantity = 1u, welltype hp_heal = 0u,
+    welltype mp_heal = 0u, bool overheal = false) :
+        ItemDelegate(name), buff_(buff), quantity_(quantity), hp_heal_(hp_heal),
+        mp_heal_(mp_heal), overheal(overheal)
+    {} // Private so that only the ItemManager class can use this constructor
 
-    friend class ItemManager;
+    friend class ItemManager; // Friend classes are allowed to access all of a class's members and methods
 };
+
 
 
 class EquipmentDelegate : public ItemDelegate {
-    const uint32_t id = -1;
-    Stats stats_;
+    const uint32_t id = 0u;
+    Stats stats;
 public:
-    // Getters
-    /// TODO: Implement getters for each stat rather than a getter for the whole Stat struct
-    const Stats& stats() const { return stats_; }
+    stattype strength() const { return stats.strength; }
+    stattype intellect() const { return stats.intellect; }
+    stattype agility() const { return stats.agility; }
+    stattype armor() const { return stats.armor; }
+    stattype resistance() const { return stats.resistance; }
 protected:
-    EquipmentDelegate(std::string name, Stats stats);
+    EquipmentDelegate(std::string name, Stats stats); // Defined in Item.cpp
 };
+
 
 
 enum class ARMORSLOT { HELMET, CHEST, LEGS, BOOTS, GLOVES, RING1, RING2, NECKLACE, NUM_SLOTS };
@@ -66,89 +81,88 @@ class Armor final : public EquipmentDelegate {
     ARMORSLOT slot_;
 
 public:
-    // Getters
-    const char* type() { return "Armor"; }
+    const char* type() const { return "Armor"; }
     ARMORSLOT slot() { return slot_; }
+
+    // Deleted Constructors
+    Armor() = delete;
+    Armor(const Armor&) = delete;
+    Armor(const Armor&&) = delete;
 
 private:
     Armor(std::string name, Stats stats, ARMORSLOT slot) : EquipmentDelegate(name, stats), slot_(slot) {}
 
     friend class ItemManager;
-
-    // Deleted Constructors
-    Armor() = delete; // Removes the default constructor so that it cannot be used
-    Armor(const Armor&) = delete; // Removes copy constructor
-    Armor(const Armor&&) = delete; // Removes move constructor
 };
+
 
 
 enum class WEAPONSLOT { MELEE, RANGED, NUM_SLOTS };
     // NUM_SLOTS is strictly only used for making arrays of WEAPONSLOTs
-
+    
 class Weapon final : public EquipmentDelegate {
     WEAPONSLOT slot_;
-    uint16_t min_damage_;
-    uint16_t max_damage_;
-    
+    stattype min_damage_;
+    stattype max_damage_;
     bool is_two_handed;
 
 public:
-    // Getters
-    const char* type() { return "Weapon"; }
+    const char* type() const { return "Weapon"; }
     WEAPONSLOT slot() { return slot_; }
-    uint16_t min_damage() { return min_damage_; }
-    uint16_t max_damage() { return max_damage_; }
+    stattype min_damage() { return min_damage_; }
+    stattype max_damage() { return max_damage_; }
+
+    // Deleted Constructors
+    Weapon() = delete;
+    Weapon(const Weapon&) = delete;
+    Weapon(const Weapon&&) = delete;
 
 private:
-    Weapon(std::string name, Stats stats, WEAPONSLOT slot, uint16_t min_damage,
-    uint16_t max_damage, bool is_two_handed = false) :
+    Weapon(std::string name, Stats stats, WEAPONSLOT slot, stattype min_damage,
+    stattype max_damage, bool is_two_handed = false) :
         EquipmentDelegate(name, stats), slot_(slot), min_damage_(min_damage),
         max_damage_(max_damage), is_two_handed(is_two_handed)
     {}
 
     friend class ItemManager;
-
-    // Deleted Constructors
-    Weapon() = delete; // Removes the default constructor so that it cannot be used
-    Weapon(const Weapon&) = delete; // Removes copy constructor
-    Weapon(const Weapon&&) = delete; // Removes move constructor
 };
 
 
-// Use this one in your runtime code
+
+// Use this class in your runtime code
 class Item {
     ItemDelegate* data_;
+    bool marked_for_deletion; // No getter for, only used by friend classes
 
 public:
-    const ItemDelegate* data() const { return data_; }
     ~Item() {
         if (data_) {
             delete data_;
             data_ = nullptr;
         }
     }
-    const bool marked_for_deletion() const { return marked_for_deletion_; }
+
+    const ItemDelegate* data() const { return data_; }
 
 private:
-    Item(ItemDelegate* item_data) : data_(item_data) {}
-    bool marked_for_deletion_ = false;
+    Item(ItemDelegate* item_data) : data_(item_data), marked_for_deletion(false) {}
 
     friend class ItemManager;
     friend class PlayerCharacter;
 
     friend std::ostream& operator<<(std::ostream& os, const Item& item) {
-    Armor* tmp_cast = dynamic_cast<Armor*>(item.data_);
-    if (tmp_cast) {
-      return os << tmp_cast->name() << " (Armor: " << tmp_cast->stats().armor << ", Resist: " << tmp_cast->stats().resistance << ')';
-    }
-    Weapon* tmp_cast2 = dynamic_cast<Weapon*>(item.data_);
-    if (tmp_cast2) {
-      return  os << tmp_cast2->name() << " (Damage: " << tmp_cast2->min_damage() << '-' << tmp_cast2->max_damage() << ')';
-    }
-    Potion* tmp_cast3 = dynamic_cast<Potion*>(item.data_);
-    if (tmp_cast3) {
-      return os << tmp_cast3->name() << " (Quantity: " << tmp_cast3->quantity << ')';
-    }
-    return os;
+        Armor* armor = dynamic_cast<Armor*>(item.data_);
+        if (armor) {
+            return os << armor->name() << " (Armor: " << armor->armor() << ", Resist: " << armor->resistance() << ')';
+        }
+        Weapon* weapon = dynamic_cast<Weapon*>(item.data_);
+        if (weapon) {
+            return  os << weapon->name() << " (Damage: " << weapon->min_damage() << '-' << weapon->max_damage() << ')';
+        }
+        Potion* potion = dynamic_cast<Potion*>(item.data_);
+        if (potion) {
+            return os << potion->name() << " (Quantity: " << potion->quantity() << ')';
+        }
+        return os;
   }
 };

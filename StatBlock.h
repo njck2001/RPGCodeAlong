@@ -5,55 +5,137 @@
 #include <iostream>
 
 
-/*  For educational purposes, access specifiers have been organized from most restrictive to least restrictive
+/*  For educational purposes, this class contains comments for explaining access specifiers and class inheritance
+    Depending on the IDE you are using, you may be able to minimize block comments to make the code easier to read
     Conventional class formatting orders access specifiers from least restictive to most restrictive (public, protected, private)
-    Typically, I like to keep private members at the top, before the public access specifier (classes are private by default)
-    Note: Derived classes will inherit as private by default unless otherwise specified
+    Derived classes will inherit as private by default (e.g. Derived : Base) unless otherwise specified (e.g. Derived : public Base)
 */
-/// TODO: Organize access specifies from public to private and make comments underneath them more clear
-    // Honestly, I forgot why I formatted it this way or how ordering from private to public is better "for educational purposes"
 class StatBlock {
-    // Typically, I like to keep private members at the top, before the public access specifier (classes are private by default)
-    // For educational purposes and clarity, I've refained from doing it here
-    // All private members and methods can be found underneath the private access specifier
+    /*  Typically, I like to keep private members at the top, before access specifiers
+            Note: Access is set to private by default in classes
+        For the sake of clarity, I've refained from doing so here
+        All private members and methods can be found underneath the private access specifier
+    */
 
-private:
-/*  Members and methods cannot be accessed by anyone (including derived classes) except by the base class
-        Note: This is regardless of whether a derived class inherits as private, protected, or public
+public: 
+/*  Members and methods can be accessed by the base class, by base class objects (e.g. statblock_obj.strength()), and by derived classes
+    If inherited as public, derived classes will inherit public members and methods as public members and methods
+        Note: This means that these members can be accessed by derived class objects that use public inheritance
+            as well as derived classes of derived classes
+    If inherited as protected, derived classes will inherit public members and methods as protected members and methods
+        Note: This means that these members and methods cannot be accessed by derived class objects that use protected inheritance,
+            but they can still be accessed by derived classes of derived classes
+    If inherited as private, derived classes will inherit public members and methods as private members and methods
+        Note: This means that these members and methods cannot be accessed by derived class objects that use private inheritance,
+            nor can they be accessed by derived classes of derived classes
 */
     
-    Stats base_stats;
+    StatBlock() : base_stats(Stats()) {}
+    StatBlock(Stats stats) : base_stats(stats) {}
 
-    std::vector<Buff> buffs_;
-    Stats buff_stats;
-
-    std::vector<Buff> debuffs_;
-    Stats debuff_stats;
-
-    void recalculate_buffs() {
-        buff_stats = Stats();
-        debuff_stats = Stats();
-        
-        for (auto buff : buffs_) {
-            buff_stats += buff.stats;
+    stattype strength() const {
+        if (total_buff_stats.strength < total_debuff_stats.strength) {
+            stattype leftover_debuff_strength = total_debuff_stats.strength - total_buff_stats.strength;
+            if (base_stats.strength < leftover_debuff_strength) {
+                return 0u;
+            }
+            else {
+                return base_stats.strength - leftover_debuff_strength;
+            }
         }
-        for (auto debuff : debuffs_) {
-            debuff_stats += debuff.stats;
+        else {
+            stattype leftover_buff_strength = total_buff_stats.strength - total_debuff_stats.strength;
+            if (base_stats.strength > (MAX_STATTYPE - leftover_buff_strength)) {
+                return MAX_STATTYPE;
+            }
+            else {
+                return base_stats.strength + leftover_buff_strength;
+            }
         }
     }
+    stattype intellect() const {
+        if (total_buff_stats.intellect < total_debuff_stats.intellect) {
+            stattype leftover_debuff_intellect = total_debuff_stats.intellect - total_buff_stats.intellect;
+            if (base_stats.intellect < leftover_debuff_intellect) {
+                return 0u;
+            }
+            else {
+                return base_stats.intellect - leftover_debuff_intellect;
+            }
+        }
+        else {
+            stattype leftover_buff_intellect = total_buff_stats.intellect - total_debuff_stats.intellect;
+            if (base_stats.intellect > (MAX_STATTYPE - leftover_buff_intellect)) {
+                return MAX_STATTYPE;
+            }
+            else {
+                return base_stats.intellect + leftover_buff_intellect;
+            }
+        }
+    }
+    stattype agility() const {
+        if (total_buff_stats.agility < total_debuff_stats.agility) {
+            stattype leftover_debuff_agility = total_debuff_stats.agility - total_buff_stats.agility;
+            if (base_stats.agility < leftover_debuff_agility) {
+                return 0u;
+            }
+            else {
+                return base_stats.agility - leftover_debuff_agility;
+            }
+        }
+        else {
+            stattype leftover_buff_agility = total_buff_stats.agility - total_debuff_stats.agility;
+            if (base_stats.agility > (MAX_STATTYPE - leftover_buff_agility)) {
+                return MAX_STATTYPE;
+            }
+            else {
+                return base_stats.agility + leftover_buff_agility;
+            }
+        }
+    }
+    stattype armor() const {
+        if (total_buff_stats.armor < total_debuff_stats.armor) {
+            stattype leftover_debuff_armor = total_debuff_stats.armor - total_buff_stats.armor;
+            if (base_stats.armor < leftover_debuff_armor) {
+                return 0u;
+            }
+            else {
+                return base_stats.armor - leftover_debuff_armor;
+            }
+        }
+        else {
+            stattype leftover_buff_armor = total_buff_stats.armor - total_debuff_stats.armor;
+            if (base_stats.armor > (MAX_STATTYPE - leftover_buff_armor)) {
+                return MAX_STATTYPE;
+            }
+            else {
+                return base_stats.armor + leftover_buff_armor;
+            }
+        }
+    }
+    stattype resistance() const {
+        if (total_buff_stats.resistance < total_debuff_stats.resistance) {
+            stattype leftover_debuff_resistance = total_debuff_stats.resistance - total_buff_stats.resistance;
+            if (base_stats.resistance < leftover_debuff_resistance) {
+                return 0u;
+            }
+            else {
+                return base_stats.resistance - leftover_debuff_resistance;
+            }
+        }
+        else {
+            stattype leftover_buff_resistance = total_buff_stats.resistance - total_debuff_stats.resistance;
+            if (base_stats.resistance > (MAX_STATTYPE - leftover_buff_resistance)) {
+                return MAX_STATTYPE;
+            }
+            else {
+                return base_stats.resistance + leftover_buff_resistance;
+            }
+        }
+    }
+    const std::vector<Buff>& buffs() const { return buffs_; }
+    const std::vector<Buff>& debuffs() const { return debuffs_; }
 
-protected: 
-/*  Members and methods can be accessed by the base class and derived classes
-    If inherited as private, derived classes will inherit protected members and methods as private members and methods
-        Note: This means that derived classes of derived classes cannot access these members and methods
-    If inherited as protected or public, derived classes will inherit protected members and methods as protected members and methods
-        Note: This means that derived classes of derived classes can access these members and methods
-*/
-    
-    void increase_stats(Stats amount) { base_stats += amount; }
-
-    const std::vector<Buff>& buffs() { return buffs_; }
-    const std::vector<Buff>& debuffs() { return debuffs_; }
     void add_buff(Buff buff) {
         if (buff.is_debuff) {
             for (auto& active_debuff : debuffs_) {
@@ -77,46 +159,41 @@ protected:
             }
             buffs_.push_back(buff);
         }
-
         recalculate_buffs();
     }
 
-public: 
-/*  Members and methods can be accessed by anyone from the base class, by the base class, and by inherited classes
-        Note: "from" the base class, meaning you can access these when using a base class object
-    If inherited as private, derived classes will inherit public members and methods as private members and methods
-        Note: This means that these members and methods cannot be accessed using a derived class object that uses private inheritance,
-            nor can they be accessed by derived classes of derived classes
-    If inherited as protected, derived classes will inherit public members and methods as protected members and methods
-        Note: This means that these members and methods cannot be accessed using a derived class object that uses protected inheritance,
-            but they can be accessed by derived classes of derived classes
-    If inherited as public, derived classes will inherit public members and methods as public members and methods
-        Note: This means that these members can be accessed using a derived class object that uses public inheritance,
-            as well as derived classes of derived classes
+protected: 
+/*  Members and methods can be accessed by the base class and derived classes
+    If inherited as public or protected, derived classes will inherit protected members and methods as protected members and methods
+        Note: This means that derived classes of derived classes can also access these members and methods
+    If inherited as private, derived classes will inherit protected members and methods as private members and methods
+        Note: This means that derived classes of derived classes cannot access these members and methods
+*/
+
+    // Protected Setter - only used by derived classes
+    void increase_stats(Stats amount) { base_stats += amount; }
+
+private:
+/*  Members and methods cannot be accessed by anyone (including derived classes) except by the base class
+        Note: This is regardless of whether a derived class inherits as private, protected, or public
 */
     
-    StatBlock() : base_stats(Stats()) {}
-    StatBlock(Stats stats) : base_stats(stats) {}
+    // Normally, I would have put these member variables at the top of the class
+    Stats base_stats;
+    std::vector<Buff> buffs_;
+    Stats total_buff_stats;
+    std::vector<Buff> debuffs_;
+    Stats total_debuff_stats;
 
-    // Getters
-    stat_type strength() {
-        stat_type sum = base_stats.strength + buff_stats.strength;
-        return (sum < debuff_stats.strength) ? 0u : sum - debuff_stats.strength;
-    }
-    stat_type intellect() {
-        stat_type sum = base_stats.intellect + buff_stats.intellect;
-        return (sum < debuff_stats.intellect) ? 0u : sum - debuff_stats.intellect;
-    }
-    stat_type agility() {
-        stat_type sum = base_stats.agility + buff_stats.agility;
-        return (sum < debuff_stats.agility) ? 0u : sum - debuff_stats.agility;
-    }
-    stat_type armor() {
-        stat_type sum = base_stats.armor + buff_stats.armor;
-        return (sum < debuff_stats.armor) ? 0u : sum - debuff_stats.armor;
-    }
-    stat_type resistance() {
-        stat_type sum = base_stats.resistance + buff_stats.resistance;
-        return (sum < debuff_stats.resistance) ? 0u : sum - debuff_stats.resistance;
+    // Helper function (helper functions are typically always private)
+    void recalculate_buffs() {
+        total_buff_stats = Stats(); // All buff stats are set to 0
+        total_debuff_stats = Stats(); // All debuff stats are set to 0
+        for (auto buff : buffs_) {
+            total_buff_stats += buff.stats;
+        }
+        for (auto debuff : debuffs_) {
+            total_debuff_stats += debuff.stats;
+        }
     }
 };

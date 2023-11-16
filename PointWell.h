@@ -1,53 +1,51 @@
-#pragma once // does the same thing as indef, define, and endif, but all in one line
+#pragma once // Does the same thing as indef, define, and endif, but all in one line
 #include "types.h"
-#include <cstdint> // uint16_t
 #include <memory> // unique_ptr
+    /// TODO: Remove memory include after removing HP class
 
 
 class PointWell {
-    well_type points_; // well_type is basically the same as an unsigned int
-    well_type max_points;
+    // Member variables
+    welltype points_;
+    welltype max_points;
 
 public:
-    PointWell() : max_points(0), points_(0) {}
-    PointWell(well_type max) : max_points(max), points_(max) {}
-    PointWell(well_type max, well_type points) : max_points(max), points_(points) {}
-
-    // returns true if set successfully
-    bool set_max(well_type new_max) {
-        if (new_max == 0)
-            return false;
-
-        max_points = new_max;
-
-        if (points_ > max_points)
-            points_ = max_points;
-
-        return true;
-    }
-
-    void decrease(well_type amount) {
-        if (amount > points_) {
-            points_ = 0;
-            return;
-        }
-
-        points_ -= amount;
-    }
-
-    void increase(well_type amount) {
-        if (amount + points_ > max_points) {
-            points_ = max_points;
-            return;
-        }
-
-        points_ += amount;
-    }
+    // Constructors
+    PointWell() : max_points(0u), points_(0u) {}
+    PointWell(welltype max) : max_points(max), points_(max) {}
+    PointWell(welltype max, welltype points) : max_points(max), points_(points) {}
 
     // Getters
-    well_type max() { return max_points; }
-    well_type points() { return points_; }
-    bool is_full() { return points_ == max_points; }
+    welltype points() const { return points_; }
+    welltype max() const { return max_points; }
+    bool is_full() const { return points_ == max_points; }
+
+    // Setters
+    void set_max(welltype new_max) {
+        max_points = new_max;
+        if (points_ > max_points) {
+            points_ = max_points;
+        }
+    }
+    void increase(welltype amount, bool allow_overfill = false) {
+        if (!allow_overfill && (amount > (max_points - points_))) {
+            points_ = max_points;
+        }
+        else if (amount > (MAX_WELLTYPE - points_)) {
+            points_ = MAX_WELLTYPE;
+        }
+        else {
+            points_ += amount;
+        }
+    }
+    void decrease(welltype amount) {
+        if (amount > points_) {
+            points_ = 0u;
+        }
+        else {
+            points_ -= amount;
+        }
+    }
 };
 
 
@@ -74,9 +72,8 @@ class HP : public PointWell {
     */
 
 public:
-    HP(well_type max_hp = 1, well_type max_shield = 0, well_type shield_points = 0) :
-        PointWell(max_hp, max_hp)
-    {
+    HP(welltype max_hp = 0u, welltype max_shield = 0u, welltype shield_points = 0u) :
+        PointWell(max_hp, max_hp) {
         if (max_shield) {
             give_shield(max_shield, shield_points);
         }
@@ -85,65 +82,68 @@ public:
         }
     }
 
-    void give_shield(well_type max_shield = 1, well_type shield_points = 0) {
-        shield_ = std::make_unique<PointWell>(max_shield, shield_points);
-    }
-
-    // returns true if set successfully
-    bool set_shield_max(well_type new_max) {
-        if (!shield_) {
-            return false;
-        }
-        return shield_->set_max(new_max);
-    }
-
-    // This function overrides the decrease function derived from the parent class PointWell
-    void decrease(well_type damage) {
-
-        if (shield_) {
-            // Case for when damage taken is more than both hp and shield combined
-            if (damage > points() + shield_->points()) {
-                shield_->decrease(shield_->points()); // set shield to zero
-                PointWell::decrease(points()); // set health to zero
-                return;
-            }
-
-            // Case for when damage taken is just greater than the shield
-            if (damage > shield_->points()) {
-                damage -= shield_->points();
-                shield_->decrease(shield_->points()); // set shield to zero
-                PointWell::decrease(damage);
-                return;
-            }
-
-            // Case for when damage taken is less than shield
-            shield_->decrease(damage);
-        }
-        else {
-            PointWell::decrease(damage);
-        }
-    }
-
-    // In PlayerCharacter, this function is essentially changed to heal_shield()
-    // We write as increase_shield here to keep the name consistent with the rest of the HP class
-    bool increase_shield(well_type amount) {
-        if (!shield_) {
-            return false;
-        }
-        shield_->increase(amount);
-        return true;
-    }
-
-    well_type shield() {
+    // Getters
+    welltype shield() const {
         if (shield_) {
             return shield_->points();
+        } else {
+            return 0u;
         }
-        return 0u;
     }
-    well_type shield_max() {
+    welltype shield_max() const {
         if (shield_) {
             return shield_->max();
         }
         return 0u;
+    }
+
+    // Setters
+    void give_shield(welltype max_shield = 1u, welltype shield_points = 0u) {
+        shield_ = std::make_unique<PointWell>(max_shield, shield_points);
+    }
+    bool set_shield_max(welltype new_max) { // Returns true if set successfully
+        if (!shield_) {
+            return false;
+        }
+        else {
+            shield_->set_max(new_max);
+            return true;
+        }
+    }
+    bool increase_shield(welltype amount) { // Returns true if shield exists
+        // In PlayerCharacter, this function is essentially changed to heal_shield
+        // We write as increase_shield here to keep the name consistent with the rest of the HP class
+        if (!shield_) {
+            return false;
+        }
+        else {
+            shield_->increase(amount);
+            return true;
+        }
+    }
+    void decrease(welltype damage) { // Overrides the decrease function derived from PointWell
+        if (shield_) {
+            
+            // Case for when damage taken is more than both hp and shield combined
+            if (damage > points() + shield_->points()) {
+                shield_->decrease(shield_->points()); // Set shield to zero
+                PointWell::decrease(points()); // Set health to zero
+            }
+
+            // Case for when damage taken is just greater than the shield
+            else if (damage > shield_->points()) {
+                damage -= shield_->points();
+                shield_->decrease(shield_->points()); // Set shield to zero
+                PointWell::decrease(damage);
+            }
+
+            // Case for when damage taken is less than shield
+            else {
+                shield_->decrease(damage);
+            }
+        }
+        else {
+            PointWell::decrease(damage);
+        }
     }
 };

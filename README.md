@@ -43,3 +43,16 @@ Some quick theoretical lists that we will iterate on.
 - Battle System: Turn Based
 - World Levels
 - Different Monsters
+
+### Educational Comments
+
+Throughout the code are comments meant to help beginner C++ programmers learn C++ concepts, as well as assist in my own learning. The order in which files are meant to be viewed is as follows:
+- [types.h](/types.h)
+- [PointWell.h](/PointWell.h)
+- [Stats.h](/Stats.h)
+- [Buff.h](/Buff.h)
+- [StatBlock.h](/StatBlock.h)
+- [Ability.h](/Ability.h)
+- [Item.h](/Item.h)
+- [PlayerCharacter.h](/PlayerCharacter.h)
+- [ItemManager.h](/ItemManager.h)
