@@ -9,17 +9,19 @@
 
 
 int main() {
-    PlayerCharacter p1(new Wizard());
+    PlayerCharacter p1(new Warrior());
     
     Item* plate_armor = ItemManager::make_armor("Shiny Plate Armor", Stats(0, 0, 0, 5, 3), ARMORSLOT::CHEST);
     Item* leather_armor = ItemManager::make_armor("Plain Leather Armor", Stats(0, 0, 0, 2, 1), ARMORSLOT::CHEST);
     Item* long_sword = ItemManager::make_weapon("Long Sword", Stats(), WEAPONSLOT::MELEE, 3, 9);
     Item* hand_axe = ItemManager::make_weapon("Rusty Hand Axe", Stats(), WEAPONSLOT::MELEE, 2, 4);
     Item* heal_potion = ItemManager::make_potion("Minor Healing", nullptr, 3, 3);
+    Item* overheal_potion = ItemManager::make_potion("Overheal", nullptr, 1, 3, 3, true);
 
     p1.equip(leather_armor);
     p1.equip(long_sword);
     p1.pick_up(heal_potion);
+    p1.pick_up(overheal_potion);
 
     for (size_t i = 0; i < 8; i++) {
         std::cout
@@ -83,18 +85,20 @@ int main() {
         if (i == 0) {
             Buff armor_buff("Thick Skin", 10, Stats(0, 0, 0, 2, 2));
             p1.add_buff(armor_buff);
+            std::cout << "Applied Thick Skin Buff" << std::endl;
             p1.damage(5u);
-            std::cout << "Damaged by 5\n" << std::endl;
+            std::cout << "Damaged by 5" << std::endl;
             p1.equip(plate_armor);
-            std::cout << "Equipped Shiny Plate Armor" << std::endl;
+            std::cout << "Equipped Shiny Plate Armor\n" << std::endl;
         }
         else if (i == 1) {
             Buff rubber_debuff("Rubber Legs", 5, Stats(5, 0, 5), true);
             p1.add_buff(rubber_debuff);
+            std::cout << "Applied Rubber Legs Debuff" << std::endl;
             p1.use(heal_potion);
-            std::cout << "Used Minor Healing Potion\n" << std::endl;
+            std::cout << "Used Minor Healing Potion" << std::endl;
             p1.equip(hand_axe);
-            std::cout << "Equipped Rusty Hand Axe" << std::endl;
+            std::cout << "Equipped Rusty Hand Axe\n" << std::endl;
         }
         else if (i == 2) {
             p1.use(heal_potion);
@@ -105,6 +109,10 @@ int main() {
             p1.damage(1u);
             p1.use(heal_potion);
             std::cout << "Used remaining Minor Healing Potions\n" << std::endl;
+        }
+        else if (i == 4) {
+            p1.use(overheal_potion);
+            std::cout << "Used Overheal Potion\n" << std::endl;
         }
         else {
             p1.gain_exp(MAX_EXPTYPE);

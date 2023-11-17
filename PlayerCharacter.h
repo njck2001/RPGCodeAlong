@@ -15,8 +15,7 @@ class PlayerCharacterDelegate : public StatBlock {
     leveltype level_;
     exptype exp_;
     exptype etnl; // EXP to next level
-    std::unique_ptr<HP> hp_;
-        /// TODO: Change hp_ to a PointWell smart pointer
+    std::unique_ptr<PointWell> hp_;
     std::unique_ptr<PointWell> mp_;
     std::vector<Ability> abilities_;
 
@@ -24,7 +23,7 @@ public:
     leveltype level() const { return level_; }
     exptype exp() { return exp_; }
     exptype exp_to_next_level() { return etnl; }
-    const std::unique_ptr<HP>& hp() { return hp_; }
+    const std::unique_ptr<PointWell>& hp() { return hp_; }
     const std::unique_ptr<PointWell>& mp() { return mp_; }
     const std::vector<Ability>& abilities() { return abilities_; }
 
@@ -44,7 +43,7 @@ protected:
     PlayerCharacterDelegate() :
         StatBlock(),
         level_(1u), exp_(0u), etnl(BASE_ETNL),
-        hp_(std::make_unique<HP>()),
+        hp_(std::make_unique<PointWell>()),
         mp_(nullptr)
     {} // Protected so that only derived classes can use this constructor
     
@@ -321,8 +320,6 @@ public:
     exptype etnl() const { return pc_class->exp_to_next_level(); }
     welltype hp() const { return pc_class->hp()->points(); }
     welltype max_hp() const { return pc_class->hp()->max(); }
-    welltype shield() const { return pc_class->hp()->shield(); }
-    welltype max_shield() const { return pc_class->hp()->shield_max(); }
     welltype mp() const {
         if (pc_class->mp()) {
             return pc_class->mp()->points();

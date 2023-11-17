@@ -92,20 +92,20 @@ public:
             if (potion->buff_) {
                 pc->add_buff(*potion->buff_);
                 pc->heal_hp(potion->hp_heal_, potion->overheal);
-                pc->heal_mp(potion->hp_heal_, potion->overheal);
+                pc->heal_mp(potion->mp_heal_, potion->overheal);
                 used_potion = true;
             }
 
             // If potion increases hp and character's hp is not max, use potion
-            else if ((potion->hp_heal_ > 0) && (!pc->pc_class->hp()->is_full())) {
+            else if (potion->overheal || ((potion->hp_heal_ > 0) && !pc->pc_class->hp()->is_full())) {
                 pc->heal_hp(potion->hp_heal_, potion->overheal);
-                pc->heal_mp(potion->hp_heal_, potion->overheal);
+                pc->heal_mp(potion->mp_heal_, potion->overheal);
                 used_potion = true;
             }
 
             // If potion increases mp and character's mp is not max, use potion
-            else if ((potion->mp_heal_ > 0) && (!pc->pc_class->mp()->is_full())) {
-                pc->heal_mp(potion->hp_heal_, potion->overheal);
+            else if (potion->overheal || ((potion->mp_heal_ > 0) && pc->pc_class->mp() && !pc->pc_class->mp()->is_full())) {
+                pc->heal_mp(potion->mp_heal_, potion->overheal);
                 used_potion = true;
             }
 
