@@ -47,12 +47,12 @@ Some quick theoretical lists that we will iterate on.
 ### Educational Comments
 
 Throughout the code are comments meant to help beginner C++ programmers learn C++ concepts, as well as assist in my own learning. The order in which files are meant to be viewed is as follows:
-- [types.h](/types.h)
-- [PointWell.h](/PointWell.h)
-- [Stats.h](/Stats.h)
-- [Buff.h](/Buff.h)
-- [StatBlock.h](/StatBlock.h)
-- [Ability.h](/Ability.h)
-- [Item.h](/Item.h)
-- [PlayerCharacter.h](/PlayerCharacter.h)
-- [ItemManager.h](/ItemManager.h)
+- [types.h](/RPGLibrary/types.h)
+- [PointWell.h](/RPGLibrary/PointWell.h)
+- [Stats.h](/RPGLibrary/Stats.h)
+- [Buff.h](/RPGLibrary/Buff.h)
+- [StatBlock.h](/RPGLibrary/StatBlock.h)
+- [Ability.h](/RPGLibrary/Ability.h)
+- [Item.h](/RPGLibrary/Item.h)
+- [PlayerCharacter.h](/RPGLibrary/PlayerCharacter.h)
+- [ItemManager.h](/RPGLibrary/ItemManager.h)
