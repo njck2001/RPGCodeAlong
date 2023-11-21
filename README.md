@@ -47,12 +47,12 @@ Some quick theoretical lists that we will iterate on.
 ### Educational Comments
 
 Throughout the code are comments meant to help beginner C++ programmers learn C++ concepts, as well as assist in my own learning. The order in which files are meant to be viewed is as follows:
-- [types.h](/RPGLibrary/types.h)
-- [PointWell.h](/RPGLibrary/PointWell.h)
-- [Stats.h](/RPGLibrary/Stats.h)
-- [Buff.h](/RPGLibrary/Buff.h)
-- [StatBlock.h](/RPGLibrary/StatBlock.h)
-- [Ability.h](/RPGLibrary/Ability.h)
-- [Item.h](/RPGLibrary/Item.h)
-- [PlayerCharacter.h](/RPGLibrary/PlayerCharacter.h)
-- [ItemManager.h](/RPGLibrary/ItemManager.h)
+- [types.h](/RPGLibrary/include/RPGLibrary/types.h)
+- [PointWell.h](/RPGLibrary/include/RPGLibrary/PointWell.h)
+- [Stats.h](/RPGLibrary/include/RPGLibrary/Stats.h)
+- [Buff.h](/RPGLibrary/include/RPGLibrary/Buff.h)
+- [StatBlock.h](/RPGLibrary/include/RPGLibrary/StatBlock.h)
+- [Ability.h](/RPGLibrary/include/RPGLibrary/Ability.h)
+- [Item.h](/RPGLibrary/include/RPGLibrary/Item.h)
+- [PlayerCharacter.h](/RPGLibrary/include/RPGLibrary/PlayerCharacter.h)
+- [ItemManager.h](/RPGLibrary/include/RPGLibrary/ItemManager.h)
