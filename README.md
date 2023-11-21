@@ -48,7 +48,6 @@ Some quick theoretical lists that we will iterate on.
 
 Throughout the code are comments meant to help beginner C++ programmers learn C++ concepts, as well as assist in my own learning. The order in which files are meant to be viewed is as follows:
 - [types.h](/RPGLibrary/include/RPGLibrary/types.h)
-- [types.cpp](/RPGLibrary/types.cpp)
 - [PointWell.h](/RPGLibrary/include/RPGLibrary/PointWell.h)
 - [PointWell.cpp](/RPGLibrary/PointWell.cpp)
 - [Stats.h](/RPGLibrary/include/RPGLibrary/Stats.h)
