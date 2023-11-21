@@ -15,31 +15,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ability.h">
+    <ClInclude Include="include\RPGLibrary\Ability.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Buff.h">
+    <ClInclude Include="include\RPGLibrary\Buff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
+    <ClInclude Include="include\RPGLibrary\Item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ItemManager.h">
+    <ClInclude Include="include\RPGLibrary\ItemManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerCharacter.h">
+    <ClInclude Include="include\RPGLibrary\PlayerCharacter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PointWell.h">
+    <ClInclude Include="include\RPGLibrary\PointWell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StatBlock.h">
+    <ClInclude Include="include\RPGLibrary\StatBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Stats.h">
+    <ClInclude Include="include\RPGLibrary\Stats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="types.h">
+    <ClInclude Include="include\RPGLibrary\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -48,9 +48,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

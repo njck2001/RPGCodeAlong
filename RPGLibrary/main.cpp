@@ -6,6 +6,9 @@
 /// TODO: Implement error messages and error handling
 /// TODO: Create .cpp files for rest of .h files
 /// TODO: Do another mass refactoring after completing the code-along series
+/// TODO: Change structs that probably should be classes into classes
+/// TODO: Create very thorough tests in RPGSystemsUnitTest.cpp
+            // Test edge cases like a character reaching MAX_LEVEL
 
 
 int main() {

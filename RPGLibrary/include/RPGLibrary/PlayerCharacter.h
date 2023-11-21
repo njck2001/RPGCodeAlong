@@ -475,7 +475,7 @@ public:
     const std::vector<Buff>& buffs() const { return pc_class->buffs(); }
     const std::vector<Buff>& debuffs() const { return pc_class->debuffs(); }
     const std::vector<Item*> backpack() const { return backpack_; }
-    EquipmentDelegate* equipped_armor(ARMORSLOT slot) const { 
+    Armor* equipped_armor(ARMORSLOT slot) const { 
         if (!equipped_armor_[(int)slot]) {
             return nullptr;
         }
@@ -483,7 +483,7 @@ public:
             return dynamic_cast<Armor*>(equipped_armor_[(int)slot]->data_);
         }
     }
-    EquipmentDelegate* equipped_armor(int slot) const {
+    Armor* equipped_armor(int slot) const {
         if (!equipped_armor_[slot]) {
             return nullptr;
         }
@@ -491,7 +491,7 @@ public:
             return dynamic_cast<Armor*>(equipped_armor_[slot]->data_);
         }
     }
-    EquipmentDelegate* equipped_weapon(WEAPONSLOT slot) const { 
+    Weapon* equipped_weapon(WEAPONSLOT slot) const { 
         if (!equipped_weapons_[(int)slot]) {
             return nullptr;
         }
@@ -499,7 +499,7 @@ public:
             return dynamic_cast<Weapon*>(equipped_weapons_[(int)slot]->data_);
         }
     }
-    EquipmentDelegate* equipped_weapon(int slot) const { 
+    Weapon* equipped_weapon(int slot) const {
         if (!equipped_weapons_[slot]) {
             return nullptr;
         }
