@@ -7,6 +7,26 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
+
+/////////////////
+/// TODO LIST ///
+/////////////////
+
+/// TODO: Create .cpp and .h files for different character classes
+	/// TODO: Add cpp and header files to bottom of README after doing so
+/// TODO: Determine if overloaded operator should be declared inside the class
+	// or outside the class, and then make the code consistent with whatever
+	// option you have determined is best
+/// TODO: Implement error messages and error handling
+/// TODO: Do another mass refactoring after completing the code-along series
+/// TODO: Change structs that probably should be classes into classes
+	// Stats can stay a stuct
+	// Ability should probably be a class
+	// Buff should also probably be a class
+/// TODO: Create very thorough tests in RPGSystemsUnitTest.cpp
+	// Test edge cases like a character reaching MAX_LEVEL
+
+
 namespace RPGSystemsUnitTest
 {
 	TEST_CLASS(RPGSystemsUnitTest)

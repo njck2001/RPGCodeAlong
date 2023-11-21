@@ -1,7 +1,7 @@
 *This program was created by following along with this YouTube series: [Demo RPG C++ Code-Along](https://www.youtube.com/watch?v=ssJde6l7mrM&list=PLalVdRk2RC6pqOVxRNj5Uui7FN4r-WorM)*<br>
 *While this version includes my own features, implementations, and comments, credit for the overall idea and core design goes to Matt Early, the creator of the YouTube channel [Code, Tech, and Tutorials](https://www.youtube.com/@CodeTechandTutorials)*
 
-# demo_rpg
+# Demo RPG
 
 Coding some basic rpg systems in C++ for practice and fun.
 
@@ -44,15 +44,24 @@ Some quick theoretical lists that we will iterate on.
 - World Levels
 - Different Monsters
 
-### Educational Comments
+## Educational Comments
 
 Throughout the code are comments meant to help beginner C++ programmers learn C++ concepts, as well as assist in my own learning. The order in which files are meant to be viewed is as follows:
 - [types.h](/RPGLibrary/include/RPGLibrary/types.h)
+- [types.cpp](/RPGLibrary/include/RPGLibrary/types.cpp)
 - [PointWell.h](/RPGLibrary/include/RPGLibrary/PointWell.h)
+- [PointWell.cpp](/RPGLibrary/include/RPGLibrary/PointWell.cpp)
 - [Stats.h](/RPGLibrary/include/RPGLibrary/Stats.h)
+- [Stats.cpp](/RPGLibrary/include/RPGLibrary/Stats.cpp)
 - [Buff.h](/RPGLibrary/include/RPGLibrary/Buff.h)
+- [Buff.cpp](/RPGLibrary/include/RPGLibrary/Buff.cpp)
 - [StatBlock.h](/RPGLibrary/include/RPGLibrary/StatBlock.h)
+- [StatBlock.cpp](/RPGLibrary/include/RPGLibrary/StatBlock.cpp)
 - [Ability.h](/RPGLibrary/include/RPGLibrary/Ability.h)
+- [Ability.cpp](/RPGLibrary/include/RPGLibrary/Ability.cpp)
 - [Item.h](/RPGLibrary/include/RPGLibrary/Item.h)
+- [Item.cpp](/RPGLibrary/include/RPGLibrary/Item.cpp)
 - [PlayerCharacter.h](/RPGLibrary/include/RPGLibrary/PlayerCharacter.h)
+- [PlayerCharacter.cpp](/RPGLibrary/include/RPGLibrary/PlayerCharacter.cpp)
 - [ItemManager.h](/RPGLibrary/include/RPGLibrary/ItemManager.h)
+- [ItemManager.cpp](/RPGLibrary/include/RPGLibrary/ItemManager.cpp)

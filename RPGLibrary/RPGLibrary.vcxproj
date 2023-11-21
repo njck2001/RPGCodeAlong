@@ -30,8 +30,15 @@
     <ClInclude Include="include\RPGLibrary\types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Ability.cpp" />
+    <ClCompile Include="Buff.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayerCharacter.cpp" />
+    <ClCompile Include="PointWell.cpp" />
+    <ClCompile Include="StatBlock.cpp" />
+    <ClCompile Include="Stats.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

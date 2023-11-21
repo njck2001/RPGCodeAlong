@@ -9,39 +9,17 @@ class PointWell {
 
 public:
     // Constructors
-    PointWell() : max_points(0u), points_(0u) {}
-    PointWell(welltype max) : max_points(max), points_(max) {}
-    PointWell(welltype max, welltype points) : max_points(max), points_(points) {}
+    PointWell();
+    PointWell(welltype max);
+    PointWell(welltype max, welltype points);
 
     // Getters
-    welltype points() const { return points_; }
-    welltype max() const { return max_points; }
-    bool is_full() const { return points_ == max_points; }
+    welltype points() const;
+    welltype max() const;
+    bool is_full() const;
 
     // Setters
-    void set_max(welltype new_max) {
-        max_points = new_max;
-        if (points_ > max_points) {
-            points_ = max_points;
-        }
-    }
-    void increase(welltype amount, bool allow_overfill = false) {
-        if (!allow_overfill && (amount > (max_points - points_))) {
-            points_ = max_points;
-        }
-        else if (amount > (MAX_WELLTYPE - points_)) {
-            points_ = MAX_WELLTYPE;
-        }
-        else {
-            points_ += amount;
-        }
-    }
-    void decrease(welltype amount) {
-        if (amount > points_) {
-            points_ = 0u;
-        }
-        else {
-            points_ -= amount;
-        }
-    }
+    void set_max(welltype new_max);
+    void increase(welltype amount, bool allow_overfill = false);
+    void decrease(welltype amount);
 };
