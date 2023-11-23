@@ -1,6 +1,7 @@
 #include "ItemManager.h"
 
 
+// Armor
 Item* ItemManager::make_armor(std::string name, Stats stats, ARMORSLOT slot) {
     /*  While it would be simpler and more convenient to return a unique_ptr, we decided
         to return a raw pointer here to better learn how to use and manage them
@@ -8,13 +9,37 @@ Item* ItemManager::make_armor(std::string name, Stats stats, ARMORSLOT slot) {
     Item* armor = new Item(new Armor(name, stats, slot));
     return armor;
 }
+void ItemManager::cast_item_to_armor(const Item* item, Armor*& armor) {
+    armor = dynamic_cast<Armor*>(item->data);
+}
+bool ItemManager::is_item_armor(const Item* item) {
+    if (dynamic_cast<Armor*>(item->data)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
+// Weapons
 Item* ItemManager::make_weapon(std::string name, Stats stats, WEAPONSLOT slot, uint16_t min_damage,
 uint16_t max_damage, bool is_two_handed) {
     Item* weapon = new Item(new Weapon(name, stats, slot, min_damage, max_damage, is_two_handed));
     return weapon;
 }
+void ItemManager::cast_item_to_weapon(const Item* item, Weapon*& weapon) {
+    weapon = dynamic_cast<Weapon*>(item->data);
+}
+bool ItemManager::is_item_weapon(const Item* item) {
+    if (dynamic_cast<Weapon*>(item->data)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
+// Potions
 Item* ItemManager::make_potion(std::string name, Buff* buff, uint16_t quantity,
 welltype hp_heal, welltype mp_heal, bool overheal) {
     if (quantity == 0) {
@@ -28,20 +53,25 @@ welltype hp_heal, welltype mp_heal, bool overheal) {
     Item* potion = new Item(new Potion(name, buff, quantity, hp_heal, mp_heal, overheal));
     return potion;
 }
+void ItemManager::cast_item_to_potion(const Item* item, Potion*& potion) {
+    potion = dynamic_cast<Potion*>(item->data);
+}
+bool ItemManager::is_item_potion(const Item* item) {
+    if (dynamic_cast<Potion*>(item->data)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
-// Returns true if item is successfully equipped
+// Player Character Functions
 bool ItemManager::equip(Item* item, PlayerCharacter* pc) {
-    if (!pc || !item || !item->data_) {
-        /*  Notice that we are able to use item->data_ instead of item->data().
-            ItemManager is a friend class of Item, so it has access to all of Item's memebers.
-            Rather than calling the getter, we can just access the member variable directly.
-            This is a very negligible optimization, and it is generally best practice to always
-            use getters when possible to avoid making any unwanted changes to member variables.
-        */
+    if (!pc || !item || !item->data) {
         return false;
     }
 
-    Armor* armor = dynamic_cast<Armor*>(item->data_);
+    Armor* armor = dynamic_cast<Armor*>(item->data);
     if (armor) {
         // Equip armor
         int slot_num = (int)armor->slot_;
@@ -55,7 +85,7 @@ bool ItemManager::equip(Item* item, PlayerCharacter* pc) {
         return true;
     }
     
-    Weapon* weapon = dynamic_cast<Weapon*>(item->data_);
+    Weapon* weapon = dynamic_cast<Weapon*>(item->data);
     if (weapon) {
         // Equip weapon
         int slot_num = (int)weapon->slot_;
@@ -71,15 +101,13 @@ bool ItemManager::equip(Item* item, PlayerCharacter* pc) {
 
     return false;
 }
-
-// Returns true if potion is used
 bool ItemManager::use(Item* item, PlayerCharacter* pc) {
-    if (!pc || !item || !item->data_) {
+    if (!pc || !item || !item->data) {
         return false;
     }
     
     bool used_potion = false;
-    Potion* potion = dynamic_cast<Potion*>(item->data_);
+    Potion* potion = dynamic_cast<Potion*>(item->data);
     if (potion) {
 
         // If potion has buff, use potion
@@ -115,10 +143,8 @@ bool ItemManager::use(Item* item, PlayerCharacter* pc) {
     }
     return used_potion;
 }
-
-// Returns true if item is successfully moved to backpack
 bool ItemManager::move_to_backpack(Item* item, PlayerCharacter* pc) {
-    if (!pc || !item || !item->data_) {
+    if (!pc || !item || !item->data) {
         return false;
     }
     else {

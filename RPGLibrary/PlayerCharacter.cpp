@@ -99,7 +99,6 @@ PlayerCharacter::PlayerCharacter(PlayerCharacterDelegate* pc_class) : pc_class(p
 PlayerCharacter::~PlayerCharacter() {
     delete pc_class;
     pc_class = nullptr;
-    
     int i;
     for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
         if (equipped_armor_[i]) {
@@ -143,7 +142,7 @@ stattype PlayerCharacter::strength() const {
     int i;
     for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
         if (equipped_armor_[i]) {
-            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data_);
+            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data);
             if (total_strength > (MAX_STATTYPE - armor->strength())) {
                 return MAX_STATTYPE;
             }
@@ -154,7 +153,7 @@ stattype PlayerCharacter::strength() const {
     }
     for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
         if (equipped_weapons_[i]) {
-            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data_);
+            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data);
             if (total_strength > (MAX_STATTYPE - weapon->strength())) {
                 return MAX_STATTYPE;
             }
@@ -170,7 +169,7 @@ stattype PlayerCharacter::intellect() const {
     int i;
     for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
         if (equipped_armor_[i]) {
-            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data_);
+            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data);
             if (total_intellect > (MAX_STATTYPE - armor->intellect())) {
                 return MAX_STATTYPE;
             }
@@ -181,7 +180,7 @@ stattype PlayerCharacter::intellect() const {
     }
     for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
         if (equipped_weapons_[i]) {
-            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data_);
+            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data);
             if (total_intellect > (MAX_STATTYPE - weapon->intellect())) {
                 return MAX_STATTYPE;
             }
@@ -197,7 +196,7 @@ stattype PlayerCharacter::agility() const {
     int i;
     for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
         if (equipped_armor_[i]) {
-            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data_);
+            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data);
             if (total_agility > (MAX_STATTYPE - armor->agility())) {
                 return MAX_STATTYPE;
             }
@@ -208,7 +207,7 @@ stattype PlayerCharacter::agility() const {
     }
     for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
         if (equipped_weapons_[i]) {
-            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data_);
+            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data);
             if (total_agility > (MAX_STATTYPE - weapon->agility())) {
                 return MAX_STATTYPE;
             }
@@ -224,7 +223,7 @@ stattype PlayerCharacter::armor() const {
     int i;
     for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
         if (equipped_armor_[i]) {
-            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data_);
+            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data);
             if (total_armor > (MAX_STATTYPE - armor->armor())) {
                 return MAX_STATTYPE;
             }
@@ -235,7 +234,7 @@ stattype PlayerCharacter::armor() const {
     }
     for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
         if (equipped_weapons_[i]) {
-            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data_);
+            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data);
             if (total_armor > (MAX_STATTYPE - weapon->armor())) {
                 return MAX_STATTYPE;
             }
@@ -251,7 +250,7 @@ stattype PlayerCharacter::resistance() const {
     int i;
     for (i = 0; i < (int)ARMORSLOT::NUM_SLOTS; i++) {
         if (equipped_armor_[i]) {
-            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data_);
+            Armor* armor = dynamic_cast<Armor*>(equipped_armor_[i]->data);
             if (total_resistance > (MAX_STATTYPE - armor->resistance())) {
                 return MAX_STATTYPE;
             }
@@ -262,7 +261,7 @@ stattype PlayerCharacter::resistance() const {
     }
     for (i = 0; i < (int)WEAPONSLOT::NUM_SLOTS; i++) {
         if (equipped_weapons_[i]) {
-            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data_);
+            Weapon* weapon = dynamic_cast<Weapon*>(equipped_weapons_[i]->data);
             if (total_resistance > (MAX_STATTYPE - weapon->resistance())) {
                 return MAX_STATTYPE;
             }
@@ -282,7 +281,7 @@ Armor* PlayerCharacter::equipped_armor(ARMORSLOT slot) const {
         return nullptr;
     }
     else {
-        return dynamic_cast<Armor*>(equipped_armor_[(int)slot]->data_);
+        return dynamic_cast<Armor*>(equipped_armor_[(int)slot]->data);
     }
 }
 Armor* PlayerCharacter::equipped_armor(int slot) const {
@@ -290,7 +289,7 @@ Armor* PlayerCharacter::equipped_armor(int slot) const {
         return nullptr;
     }
     else {
-        return dynamic_cast<Armor*>(equipped_armor_[slot]->data_);
+        return dynamic_cast<Armor*>(equipped_armor_[slot]->data);
     }
 }
 Weapon* PlayerCharacter::equipped_weapon(WEAPONSLOT slot) const { 
@@ -298,7 +297,7 @@ Weapon* PlayerCharacter::equipped_weapon(WEAPONSLOT slot) const {
         return nullptr;
     }
     else {
-        return dynamic_cast<Weapon*>(equipped_weapons_[(int)slot]->data_);
+        return dynamic_cast<Weapon*>(equipped_weapons_[(int)slot]->data);
     }
 }
 Weapon* PlayerCharacter::equipped_weapon(int slot) const {
@@ -306,7 +305,7 @@ Weapon* PlayerCharacter::equipped_weapon(int slot) const {
         return nullptr;
     }
     else {
-        return dynamic_cast<Weapon*>(equipped_weapons_[slot]->data_);
+        return dynamic_cast<Weapon*>(equipped_weapons_[slot]->data);
     }
 }
 

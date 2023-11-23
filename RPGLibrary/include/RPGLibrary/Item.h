@@ -13,9 +13,11 @@ public:
         that cannot be modified. The second const allows const objects to call this functions.
         Otherwise, trying to call name() using a const object would cause an error.
     */
-    virtual const char* type() const = 0; // See PlayerCharacter.h to learn about virtual functions
 protected:
     ItemDelegate(std::string name);
+    virtual ~ItemDelegate() = 0 {}//; // Derived classes must define deconstructor
+        // See PlayerCharacter.h to learn more about virtual functions
+    friend class Item; // Friend classes are allowed to access all of a class's members and methods
 };
 
 
@@ -30,8 +32,7 @@ class Potion final : public ItemDelegate {
 public:
     // Deconstructor
     ~Potion();
-
-    const char* type() const;
+    
     const Buff* buff() const;
     welltype hp_heal() const;
     welltype mp_heal() const;
@@ -47,7 +48,7 @@ private:
         welltype mp_heal = 0u, bool overheal = false);
         // Private so that only the ItemManager class can use this constructor
 
-    friend class ItemManager; // Friend classes are allowed to access all of a class's members and methods
+    friend class ItemManager;
 };
 
 
@@ -63,6 +64,7 @@ public:
     stattype resistance() const;
 protected:
     EquipmentDelegate(std::string name, Stats stats);
+    virtual ~EquipmentDelegate() = 0 {}//; // This virtual deconstructor might not actually be necessary
 };
 
 
@@ -74,7 +76,6 @@ class Armor final : public EquipmentDelegate {
     ARMORSLOT slot_;
 
 public:
-    const char* type() const;
     ARMORSLOT slot() const;
 
     // Deleted Constructors
@@ -100,7 +101,6 @@ class Weapon final : public EquipmentDelegate {
     bool is_two_handed;
 
 public:
-    const char* type() const;
     WEAPONSLOT slot();
     stattype min_damage();
     stattype max_damage();
@@ -120,22 +120,16 @@ private:
 
 
 // Use this class in your runtime code
-class Item {
-    ItemDelegate* data_;
-    bool marked_for_deletion; // No getter for, only used by friend classes
-
-public:
-    ~Item() {
-        if (data_) {
-            delete data_;
-            data_ = nullptr;
-        }
-    }
-
-    const ItemDelegate* data() const { return data_; }
+class Item final {
+    // No getters for, only used by friend classes
+    ItemDelegate* data;
+    bool marked_for_deletion;
 
 private:
     Item(ItemDelegate* item_data);
+    ~Item();
+    /// TODO: If we end up implementing Item such that it points to whoever possesses it,
+        // we will redefine the deconstructor and make it public again.
 
     friend class ItemManager;
     friend class PlayerCharacter;

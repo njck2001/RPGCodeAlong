@@ -229,7 +229,7 @@ private:
 
 
 
-class PlayerCharacter {
+class PlayerCharacter final {
     PlayerCharacterDelegate* pc_class;
     Item* equipped_armor_[(int)ARMORSLOT::NUM_SLOTS];
     Item* equipped_weapons_[(int)WEAPONSLOT::NUM_SLOTS];

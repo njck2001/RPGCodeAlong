@@ -12,6 +12,16 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 /// TODO LIST ///
 /////////////////
 
+/// TODO: Test deleting an Item
+	/*	If an item is in a PC's backpack, and the item is deleted,
+		how does that affect the backpack? If we tried to iterate
+		through all the items in the backpack, would we find something
+		funny? How does it compare to calling cleanup backpack, like we
+		should? Would it be better to have items track who has it (set to
+		nullptr if no one has it) and then do something similar to
+		cleanup_backpack() in Item's deconstructor?
+	*/
+/// TODO: Look at Tutorial's GitHub Repo and implement tests
 /// TODO: Create .cpp and .h files for different character classes
 	/// TODO: Add cpp and header files to bottom of README after doing so
 /// TODO: Determine if overloaded operator should be declared inside the class
@@ -25,6 +35,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 	// Buff should also probably be a class
 /// TODO: Create very thorough tests in RPGSystemsUnitTest.cpp
 	// Test edge cases like a character reaching MAX_LEVEL
+/// TODO: Compare our GitHub Repo to Tutorial's GitHub Repo
 
 
 namespace RPGSystemsUnitTest
